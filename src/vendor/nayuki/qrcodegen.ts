@@ -988,3 +988,5 @@ namespace qrcodegen.QrSegment {
 		
 	}
 }
+
+export { qrcodegen };
