@@ -1,4 +1,5 @@
 import './style.css'
+import { generateQrGrid } from './generator'
 
 const app = document.querySelector<HTMLDivElement>('#app')
 
@@ -20,9 +21,38 @@ if (app) {
         </label>
         <button id="download-btn" type="button">Download STL</button>
         <div class="status-area" aria-live="polite">
-          <div class="spinner-placeholder">Processing indicator goes here</div>
+          <div class="spinner-placeholder">Waiting to generate QR...</div>
         </div>
       </section>
     </main>
   `
+
+  const input = app.querySelector<HTMLInputElement>('#qr-input')
+  const downloadBtn = app.querySelector<HTMLButtonElement>('#download-btn')
+  const statusArea = app.querySelector<HTMLDivElement>('.status-area')
+
+  const setStatus = (message: string) => {
+    if (statusArea) {
+      statusArea.textContent = message
+    }
+  }
+
+  downloadBtn?.addEventListener('click', () => {
+    const text = (input?.value ?? '').trim()
+    if (!text) {
+      setStatus('Enter text to encode into the QR.')
+      return
+    }
+
+    try {
+      const grid = generateQrGrid(text)
+
+      // TODO: Pass the grid into the voxel + STL pipeline and trigger download.
+      console.log('QR bool grid ready', grid)
+      setStatus(`QR generated (${grid.width}x${grid.height}) with high error correction.`)
+    } catch (error) {
+      console.error('Failed to encode QR', error)
+      setStatus('Could not generate QR. Please try different text.')
+    }
+  })
 }
