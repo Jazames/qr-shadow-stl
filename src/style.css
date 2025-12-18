@@ -1,96 +1,156 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "DM Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  color: #0b1021;
+  background: radial-gradient(circle at 20% 20%, #f0f5ff 0, #fff 35%),
+    radial-gradient(circle at 80% 0%, #f5f7ff 0, #f7f9ff 25%, #fff 50%);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
   min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  color: #0b1021;
 }
 
 #app {
-  max-width: 1280px;
+  min-height: 100vh;
+}
+
+.shell {
+  max-width: 960px;
   margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  padding: 64px 24px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vanilla:hover {
-  filter: drop-shadow(0 0 2em #3178c6aa);
+.hero {
+  display: grid;
+  gap: 12px;
+  text-align: left;
 }
 
-.card {
-  padding: 2em;
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #4a6bff;
+  margin: 0;
 }
 
-.read-the-docs {
-  color: #888;
+h1 {
+  margin: 0;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  line-height: 1.05;
+  color: #0b1021;
+}
+
+.lede {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #2c3042;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #e3e7f2;
+  border-radius: 16px;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  box-shadow: 0 20px 50px rgba(10, 25, 65, 0.08);
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #1d2140;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #c9d3ef;
+  font-size: 1rem;
+  background: #f8faff;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #4a6bff;
+  box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
+  background: #fff;
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
+  border-radius: 12px;
+  border: 1px solid #4a6bff;
+  padding: 12px 18px;
+  font-size: 1rem;
+  font-weight: 700;
   font-family: inherit;
-  background-color: #1a1a1a;
+  color: #fff;
+  background: linear-gradient(120deg, #4a6bff, #5c8dff);
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  transition: transform 120ms ease, box-shadow 160ms ease, filter 160ms ease;
+  box-shadow: 0 10px 30px rgba(74, 107, 255, 0.25);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
+button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(74, 107, 255, 0.35);
+  outline-offset: 3px;
+}
+
+.status-area {
+  border: 1px dashed #c9d3ef;
+  border-radius: 12px;
+  padding: 14px;
+  min-height: 72px;
+  display: grid;
+  place-items: center;
+  color: #5a6180;
+  background: #f9fbff;
+}
+
+.spinner-placeholder {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+@media (max-width: 640px) {
+  .shell {
+    padding: 48px 16px 72px;
   }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
+
+  .panel {
+    padding: 20px;
   }
 }

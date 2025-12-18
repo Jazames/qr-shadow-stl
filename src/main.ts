@@ -1,24 +1,28 @@
 import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+const app = document.querySelector<HTMLDivElement>('#app')
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+if (app) {
+  app.innerHTML = `
+    <main class="shell">
+      <header class="hero">
+        <p class="eyebrow">QR Shadow STL Generator</p>
+        <h1>Generate designs for a 3D object that can cast a QR code as its shadow</h1>
+        <p class="lede">
+          Enter the text to encode, then download an STL that casts a QR code in shadow.
+        </p>
+      </header>
+
+      <section class="panel">
+        <label class="field">
+          <span class="field-label">QR content</span>
+          <input id="qr-input" type="text" placeholder="https://youtu.be/yfG94k41MrI" />
+        </label>
+        <button id="download-btn" type="button">Download STL</button>
+        <div class="status-area" aria-live="polite">
+          <div class="spinner-placeholder">Processing indicator goes here</div>
+        </div>
+      </section>
+    </main>
+  `
+}
