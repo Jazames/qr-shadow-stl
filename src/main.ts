@@ -46,10 +46,21 @@ if (app) {
 
     try {
       const grid = generateQrGrid(text)
+      const bytes = grid.stlBytes.slice().buffer;
+      const blob = new Blob([bytes], { type: 'model/stl' })
+      const url = URL.createObjectURL(blob)
 
-      // TODO: Pass the grid into the voxel + STL pipeline and trigger download.
-      console.log('QR bool grid ready', grid)
-      setStatus(`QR generated (${grid.width}x${grid.height}) with high error correction.`)
+      const anchor = document.createElement('a')
+      anchor.href = url
+      anchor.download = 'qr-shadow.stl'
+      document.body.appendChild(anchor)
+      anchor.click()
+      anchor.remove()
+      URL.revokeObjectURL(url)
+
+      setStatus(
+        `STL ready (${grid.width}x${grid.height} QR). Downloaded with high error correction.`
+      )
     } catch (error) {
       console.error('Failed to encode QR', error)
       setStatus('Could not generate QR. Please try different text.')

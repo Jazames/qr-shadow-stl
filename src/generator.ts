@@ -1,4 +1,6 @@
 import { qrcodegen } from './vendor/nayuki/qrcodegen'
+import { gridToBinaryStl } from './stl/stlGenerator'
+import type { VoxelGrid3d } from './stl/stlGenerator'
 import { CubeNode } from './voxel/cubeNode'
 
 export type BoolGrid2d = {
@@ -9,7 +11,30 @@ export type BoolGrid2d = {
 
 export type CubeGrid3d = CubeNode[][][]
 
-export const generateQrGrid = (text: string): BoolGrid2d & { cubeGrid: CubeGrid3d } => {
+export type QrGenerationResult = BoolGrid2d & {
+  cubeGrid: CubeGrid3d
+  stlBytes: Uint8Array
+}
+
+const cubeGridToVoxelGrid = (cubeGrid: CubeGrid3d): VoxelGrid3d => {
+  const sizeX = cubeGrid.length
+  const sizeY = sizeX > 0 ? cubeGrid[0].length : 0
+  const sizeZ = sizeY > 0 ? cubeGrid[0][0].length : 0
+  const data = new Uint8Array(sizeX * sizeY * sizeZ)
+
+  for (let x = 0; x < sizeX; x++) {
+    for (let y = 0; y < sizeY; y++) {
+      for (let z = 0; z < sizeZ; z++) {
+        const idx = x + sizeX * (y + sizeY * z)
+        data[idx] = cubeGrid[x][y][z].isSolid ? 1 : 0
+      }
+    }
+  }
+
+  return { sizeX, sizeY, sizeZ, data }
+}
+
+export const generateQrGrid = (text: string): QrGenerationResult => {
   const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.HIGH)
   const size = qr.size
   const data = new Uint8Array(size * size)
@@ -22,8 +47,8 @@ export const generateQrGrid = (text: string): BoolGrid2d & { cubeGrid: CubeGrid3
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const isModuleFilled = qr.getModule(x, y)
-      if (isModuleFilled) {
-        for (let z = 0; z < size; z++) {mmit 
+      if (!isModuleFilled) {
+        for (let z = 0; z < size; z++) {
           cubeGrid[x][y][z].clearX()
         }
       }
@@ -31,5 +56,9 @@ export const generateQrGrid = (text: string): BoolGrid2d & { cubeGrid: CubeGrid3
     }
   }
 
-  return { width: size, height: size, data, cubeGrid }
+  const voxelGrid = cubeGridToVoxelGrid(cubeGrid)
+  const voxelSizeMm = 1
+  const stlBytes = gridToBinaryStl(voxelGrid, voxelSizeMm)
+
+  return { width: size, height: size, data, cubeGrid, stlBytes }
 }
