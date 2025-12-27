@@ -1,5 +1,5 @@
 import { qrcodegen } from './vendor/nayuki/qrcodegen'
-import { DEFAULT_RESOLUTION, DEFAULT_WALL_THICKNESS_VOXELS, gridToBinaryStl } from './stl/stlGenerator'
+import { gridToBinaryStl } from './stl/stlGenerator'
 import type { VoxelGrid3d } from './stl/stlGenerator'
 import { CubeNode } from './voxel/cubeNode'
 
@@ -65,7 +65,7 @@ export const generateQrGrid = (text: string): QrGenerationResult => {
       const isModuleFilled = qr.getModule(x, y)
       if (!isModuleFilled) {
         for (let z = 0; z < size; z++) {
-          cubeGrid[x][y][z].clearX()
+          cubeGrid[x][y][z].clearZ()
         }
       }
     }
@@ -76,8 +76,8 @@ export const generateQrGrid = (text: string): QrGenerationResult => {
   const stlBytes = gridToBinaryStl(
     voxelGrid,
     voxelSizeMm,
-    DEFAULT_RESOLUTION,
-    DEFAULT_WALL_THICKNESS_VOXELS
+    1000,
+    30
   )
 
   return { width: size, height: size, cubeGrid, stlBytes }
