@@ -8,15 +8,51 @@ export type VoxelGrid3d = {
   sizeX: number
   sizeY: number
   sizeZ: number
+  // The 0 bit indicates the center voxel is solid; 1 means filled, 0 means empty.
+  // The 1 bit is whether the voxel has faces normal to the x-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to x-axis.
+  // The 2 bit is whether the voxel has faces normal to the y-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to y-axis.
+  // The 3 bit is whether the voxel has faces normal to the z-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to z-axis.
   data: Uint8Array
 }
+
+const resolution = 1000
+const wallThicknessVoxels = 10
 
 const isSolid = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
   if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
     return false
   }
   const idx = x + grid.sizeX * (y + grid.sizeY * z)
-  return grid.data[idx] === 1
+  return (grid.data[idx] & 0x01) === 0x01
+}
+
+const isEmpty = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+    return true
+  }
+  const idx = x + grid.sizeX * (y + grid.sizeY * z)
+  return (grid.data[idx] & 0x0F) === 0
+}
+
+const hasXSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+    return false
+  }
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & 0x02) === 0x02
+}
+
+const hasYSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+    return false
+  }
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & 0x04) === 0x04
+}
+
+const hasZSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+    return false
+  }
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & 0x08) === 0x08
 }
 
 const addFace = (
@@ -36,16 +72,18 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
   for (let z = 0; z < grid.sizeZ; z++) {
     for (let y = 0; y < grid.sizeY; y++) {
       for (let x = 0; x < grid.sizeX; x++) {
-        if (!isSolid(grid, x, y, z)) continue
+        if (!isSolid(grid, x, y, z)) { //TODO: revert to isEmpty
+          continue
+        }
 
-        const x0 = x
-        const x1 = x + 1
-        const y0 = y
-        const y1 = y + 1
-        const z0 = z
-        const z1 = z + 1
-
-        if (!isSolid(grid, x + 1, y, z)) {
+        // Handle any needed shared surfaces
+        const x0 = x * resolution
+        const x1 = (x * resolution) + resolution
+        const y0 = y * resolution
+        const y1 = (y * resolution) + resolution
+        const z0 = z * resolution
+        const z1 = (z * resolution) + resolution
+        if (isEmpty(grid, x + 1, y, z) && hasXSurface(grid, x, y, z)) {
           addFace(
             tris,
             [x1, y0, z0],
@@ -55,7 +93,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
           )
         }
 
-        if (!isSolid(grid, x - 1, y, z)) {
+        if (isEmpty(grid, x - 1, y, z) && hasXSurface(grid, x, y, z)) {
           addFace(
             tris,
             [x0, y0, z0],
@@ -65,7 +103,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
           )
         }
 
-        if (!isSolid(grid, x, y + 1, z)) {
+        if (!hasYSurface(grid, x, y + 1, z) && hasYSurface(grid, x, y, z)) {
           addFace(
             tris,
             [x0, y1, z0],
@@ -75,7 +113,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
           )
         }
 
-        if (!isSolid(grid, x, y - 1, z)) {
+        if (!hasYSurface(grid, x, y - 1, z) && hasYSurface(grid, x, y, z)) {
           addFace(
             tris,
             [x0, y0, z0],
@@ -85,7 +123,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
           )
         }
 
-        if (!isSolid(grid, x, y, z + 1)) {
+        if (!hasZSurface(grid, x, y, z + 1) && hasZSurface(grid, x, y, z)) {
           addFace(
             tris,
             [x0, y0, z1],
@@ -95,7 +133,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
           )
         }
 
-        if (!isSolid(grid, x, y, z - 1)) {
+        if (!hasZSurface(grid, x, y, z - 1) && hasZSurface(grid, x, y, z)) {
           addFace(
             tris,
             [x0, y0, z0],
@@ -103,6 +141,49 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
             [x1, y1, z0],
             [x1, y0, z0]
           )
+        }
+        
+        //Handle the internal faces
+        if (!isSolid(grid, x, y, z)) {
+          //Handle case where only Y and Z surfaces are present
+          if (hasYSurface(grid, x, y, z) && hasZSurface(grid, x, y, z) && !hasXSurface(grid, x, y, z)) {
+            const innerY0 = y0 + wallThicknessVoxels
+            const innerY1 = y1 - wallThicknessVoxels
+            const innerZ0 = z0 + wallThicknessVoxels
+            const innerZ1 = z1 - wallThicknessVoxels
+
+            addFace(
+              tris,
+              [x0, innerY0, innerZ0],
+              [x0, innerY0, innerZ1],
+              [x1, innerY0, innerZ1],
+              [x1, innerY0, innerZ0]
+            )
+
+            addFace(
+              tris,
+              [x0, innerY1, innerZ0],
+              [x1, innerY1, innerZ0],
+              [x1, innerY1, innerZ1],
+              [x0, innerY1, innerZ1]
+            )
+
+            addFace(
+              tris,
+              [x0, innerY0, innerZ0],
+              [x1, innerY0, innerZ0],
+              [x1, innerY1, innerZ0],
+              [x0, innerY1, innerZ0]
+            )
+
+            addFace(
+              tris,
+              [x0, innerY0, innerZ1],
+              [x0, innerY1, innerZ1],
+              [x1, innerY1, innerZ1],
+              [x1, innerY0, innerZ1]
+            )
+          }
         }
       }
     }

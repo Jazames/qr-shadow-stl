@@ -1,5 +1,8 @@
 export class CubeNode {
   isSolid: boolean
+  hasSurfacesNormalToX: boolean = true
+  hasSurfacesNormalToY: boolean = true
+  hasSurfacesNormalToZ: boolean = true
 
   constructor(isSolid = true) {
     this.isSolid = isSolid
@@ -7,14 +10,17 @@ export class CubeNode {
 
   clearX(): void {
     this.isSolid = false
+    this.hasSurfacesNormalToX = false
   }
 
   clearY(): void {
     this.isSolid = false
+    this.hasSurfacesNormalToY = false
   }
 
   clearZ(): void {
     this.isSolid = false
+    this.hasSurfacesNormalToZ = false
   }
 
   fillX(): void {

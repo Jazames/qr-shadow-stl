@@ -6,7 +6,7 @@ import { CubeNode } from './voxel/cubeNode'
 export type BoolGrid2d = {
   width: number
   height: number
-  data: Uint8Array
+  //data: Uint8Array
 }
 
 export type CubeGrid3d = CubeNode[][][]
@@ -14,6 +14,23 @@ export type CubeGrid3d = CubeNode[][][]
 export type QrGenerationResult = BoolGrid2d & {
   cubeGrid: CubeGrid3d
   stlBytes: Uint8Array
+}
+
+const getDataFromCubeNode = (node: CubeNode): number => {
+  let value: number = 0
+  if (node.isSolid) {
+    value |= 0x01
+  }
+  if (node.hasSurfacesNormalToX) {
+    value |= 0x02
+  }
+  if (node.hasSurfacesNormalToY) {
+    value |= 0x04
+  }
+  if (node.hasSurfacesNormalToZ) {
+    value |= 0x08
+  }
+  return value
 }
 
 const cubeGridToVoxelGrid = (cubeGrid: CubeGrid3d): VoxelGrid3d => {
@@ -26,7 +43,7 @@ const cubeGridToVoxelGrid = (cubeGrid: CubeGrid3d): VoxelGrid3d => {
     for (let y = 0; y < sizeY; y++) {
       for (let z = 0; z < sizeZ; z++) {
         const idx = x + sizeX * (y + sizeY * z)
-        data[idx] = cubeGrid[x][y][z].isSolid ? 1 : 0
+        data[idx] = getDataFromCubeNode(cubeGrid[x][y][z])
       }
     }
   }
@@ -37,7 +54,6 @@ const cubeGridToVoxelGrid = (cubeGrid: CubeGrid3d): VoxelGrid3d => {
 export const generateQrGrid = (text: string): QrGenerationResult => {
   const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.HIGH)
   const size = qr.size
-  const data = new Uint8Array(size * size)
   const cubeGrid: CubeGrid3d = Array.from({ length: size }, () =>
     Array.from({ length: size }, () =>
       Array.from({ length: size }, () => new CubeNode())
@@ -52,7 +68,7 @@ export const generateQrGrid = (text: string): QrGenerationResult => {
           cubeGrid[x][y][z].clearX()
         }
       }
-      data[y * size + x] = isModuleFilled ? 1 : 0
+      //data[y * size + x] = isModuleFilled ? 1 : 0
     }
   }
 
@@ -60,5 +76,5 @@ export const generateQrGrid = (text: string): QrGenerationResult => {
   const voxelSizeMm = 1
   const stlBytes = gridToBinaryStl(voxelGrid, voxelSizeMm)
 
-  return { width: size, height: size, data, cubeGrid, stlBytes }
+  return { width: size, height: size, cubeGrid, stlBytes }
 }
