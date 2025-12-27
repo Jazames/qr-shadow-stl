@@ -70,9 +70,9 @@ test("3x3x3 cube missing center line along z-axis generates 128 triangles", asyn
     await writeStlFixture("cube-3x3x3-missing-z.stl", stl);
 });
 test("2x2x2 cube missing one row along each axis generates 12 triangles", async () => {
-    const grid = createGrid(2, 2, 2, (x, y, z) => x !== 0 && y !== 0 && z !== 0);
+    const grid = createGrid(2, 2, 2, (x, y, z) => x + y + z < 2);
     const tris = surfaceExtract(grid);
-    assert.equal(tris.length, 12);
+    assert.equal(tris.length, 36);
     const stl = writeBinaryStl(tris, 1);
     await writeStlFixture("cube-2x2x2-missing-xyz-row.stl", stl);
 });

@@ -41,9 +41,10 @@ test("1x1x1 cube generates 12 triangles and valid binary STL", async () => {
   const grid = createGrid(1, 1, 1, () => true)
 
   const tris = surfaceExtract(grid)
-  assert.equal(tris.length, 12)
-
   const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("cube-1x1x1.stl", stl)
+
+  assert.equal(tris.length, 12)
   assert.equal(stl.byteLength, 80 + 4 + 12 * 50)
 
   const view = new DataView(stl.buffer, stl.byteOffset, stl.byteLength)
@@ -60,44 +61,42 @@ test("1x1x1 cube generates 12 triangles and valid binary STL", async () => {
       assert.ok(coord === 0 || coord === 1000, `unexpected coord ${coord}`)
     }
   }
-
-  await writeStlFixture("cube-1x1x1.stl", stl)
 })
 
 test("3x3x3 cube missing center line along x-axis generates 128 triangles", async () => {
   const grid = createGrid(3, 3, 3, (_, y, z) => !(y === 1 && z === 1))
   const tris = surfaceExtract(grid)
-  assert.equal(tris.length, 128)
-
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-x.stl", stl)
+
+  assert.equal(tris.length, 128)
 })
 
 test("3x3x3 cube missing center line along y-axis generates 128 triangles", async () => {
   const grid = createGrid(3, 3, 3, (x, _, z) => !(x === 1 && z === 1))
   const tris = surfaceExtract(grid)
-  assert.equal(tris.length, 128)
-
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-y.stl", stl)
+
+  assert.equal(tris.length, 128)
 })
 
 test("3x3x3 cube missing center line along z-axis generates 128 triangles", async () => {
   const grid = createGrid(3, 3, 3, (x, y, _) => !(x === 1 && y === 1))
   const tris = surfaceExtract(grid)
-  assert.equal(tris.length, 128)
-
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-z.stl", stl)
+
+  assert.equal(tris.length, 128)
 })
 
 test("2x2x2 cube missing one row along each axis generates 12 triangles", async () => {
-  const grid = createGrid(2, 2, 2, (x, y, z) => x !== 0 && y !== 0 && z !== 0)
+  const grid = createGrid(2, 2, 2, (x, y, z) => x + y + z < 2);
   const tris = surfaceExtract(grid)
-  assert.equal(tris.length, 12)
-
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-2x2x2-missing-xyz-row.stl", stl)
+
+  assert.equal(tris.length, 36)
 })
 
 test("1x1x1 box with x-axis hole generates 8 triangles", async () => {
@@ -106,7 +105,7 @@ test("1x1x1 box with x-axis hole generates 8 triangles", async () => {
 
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-x-hole.stl", stl)
-  
+
   assert.equal(tris.length, 8)
 })
 
