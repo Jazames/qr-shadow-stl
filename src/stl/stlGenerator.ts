@@ -514,6 +514,342 @@ const addInnerFacesForXYOnly = (
   }
 }
 
+const addInnerFacesForXOnly = (
+  tris: Triangle[],
+  grid: VoxelGrid3d,
+  x: number,
+  y: number,
+  z: number,
+  resolution: number,
+  wallThicknessVoxels: number
+): void => {
+  const x0 = x * resolution
+  const x1 = (x * resolution) + resolution
+  const y0 = y * resolution
+  const y1 = (y * resolution) + resolution
+  const z0 = z * resolution
+  const z1 = (z * resolution) + resolution
+  const innerX0 = x0 + wallThicknessVoxels
+  const innerX1 = x1 - wallThicknessVoxels
+
+  addFace(
+    tris,
+    [innerX0, y0, z0],
+    [innerX0, y1, z0],
+    [innerX0, y1, z1],
+    [innerX0, y0, z1]
+  )
+
+  addFace(
+    tris,
+    [innerX1, y0, z0],
+    [innerX1, y0, z1],
+    [innerX1, y1, z1],
+    [innerX1, y1, z0]
+  )
+
+  const neighborMinusHasXOnY = hasXSurface(grid, x, y - 1, z)
+  const neighborPlusHasXOnY = hasXSurface(grid, x, y + 1, z)
+  const neighborMinusHasXOnZ = hasXSurface(grid, x, y, z - 1)
+  const neighborPlusHasXOnZ = hasXSurface(grid, x, y, z + 1)
+
+  if (!neighborMinusHasXOnY) {
+    addFace(
+      tris,
+      [x0, y0, z0],
+      [x0, y0, z1],
+      [innerX0, y0, z1],
+      [innerX0, y0, z0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, y0, z0],
+      [innerX1, y0, z1],
+      [x1, y0, z1],
+      [x1, y0, z0]
+    )
+  }
+
+  if (!neighborPlusHasXOnY) {
+    addFace(
+      tris,
+      [x0, y1, z0],
+      [x0, y1, z1],
+      [innerX0, y1, z1],
+      [innerX0, y1, z0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, y1, z0],
+      [innerX1, y1, z1],
+      [x1, y1, z1],
+      [x1, y1, z0]
+    )
+  }
+
+  if (!neighborMinusHasXOnZ) {
+    addFace(
+      tris,
+      [x0, y0, z0],
+      [x0, y1, z0],
+      [innerX0, y1, z0],
+      [innerX0, y0, z0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, y0, z0],
+      [innerX1, y1, z0],
+      [x1, y1, z0],
+      [x1, y0, z0]
+    )
+  }
+
+  if (!neighborPlusHasXOnZ) {
+    addFace(
+      tris,
+      [x0, y0, z1],
+      [innerX0, y0, z1],
+      [innerX0, y1, z1],
+      [x0, y1, z1]
+    )
+
+    addFace(
+      tris,
+      [innerX1, y0, z1],
+      [x1, y0, z1],
+      [x1, y1, z1],
+      [innerX1, y1, z1]
+    )
+  }
+}
+
+const addInnerFacesForYOnly = (
+  tris: Triangle[],
+  grid: VoxelGrid3d,
+  x: number,
+  y: number,
+  z: number,
+  resolution: number,
+  wallThicknessVoxels: number
+): void => {
+  const x0 = x * resolution
+  const x1 = (x * resolution) + resolution
+  const y0 = y * resolution
+  const y1 = (y * resolution) + resolution
+  const z0 = z * resolution
+  const z1 = (z * resolution) + resolution
+  const innerY0 = y0 + wallThicknessVoxels
+  const innerY1 = y1 - wallThicknessVoxels
+
+  addFace(
+    tris,
+    [x0, innerY0, z0],
+    [x0, innerY0, z1],
+    [x1, innerY0, z1],
+    [x1, innerY0, z0]
+  )
+
+  addFace(
+    tris,
+    [x0, innerY1, z0],
+    [x1, innerY1, z0],
+    [x1, innerY1, z1],
+    [x0, innerY1, z1]
+  )
+
+  const neighborMinusHasYOnX = hasYSurface(grid, x - 1, y, z)
+  const neighborPlusHasYOnX = hasYSurface(grid, x + 1, y, z)
+  const neighborMinusHasYOnZ = hasYSurface(grid, x, y, z - 1)
+  const neighborPlusHasYOnZ = hasYSurface(grid, x, y, z + 1)
+
+  if (!neighborMinusHasYOnX) {
+    addFace(
+      tris,
+      [x0, y0, z0],
+      [x0, y0, z1],
+      [x0, innerY0, z1],
+      [x0, innerY0, z0]
+    )
+
+    addFace(
+      tris,
+      [x0, innerY1, z0],
+      [x0, innerY1, z1],
+      [x0, y1, z1],
+      [x0, y1, z0]
+    )
+  }
+
+  if (!neighborPlusHasYOnX) {
+    addFace(
+      tris,
+      [x1, y0, z0],
+      [x1, innerY0, z0],
+      [x1, innerY0, z1],
+      [x1, y0, z1]
+    )
+
+    addFace(
+      tris,
+      [x1, innerY1, z0],
+      [x1, y1, z0],
+      [x1, y1, z1],
+      [x1, innerY1, z1]
+    )
+  }
+
+  if (!neighborMinusHasYOnZ) {
+    addFace(
+      tris,
+      [x0, y0, z0],
+      [x0, innerY0, z0],
+      [x1, innerY0, z0],
+      [x1, y0, z0]
+    )
+
+    addFace(
+      tris,
+      [x0, innerY1, z0],
+      [x0, y1, z0],
+      [x1, y1, z0],
+      [x1, innerY1, z0]
+    )
+  }
+
+  if (!neighborPlusHasYOnZ) {
+    addFace(
+      tris,
+      [x0, y0, z1],
+      [x1, y0, z1],
+      [x1, innerY0, z1],
+      [x0, innerY0, z1]
+    )
+
+    addFace(
+      tris,
+      [x0, innerY1, z1],
+      [x1, innerY1, z1],
+      [x1, y1, z1],
+      [x0, y1, z1]
+    )
+  }
+}
+
+const addInnerFacesForZOnly = (
+  tris: Triangle[],
+  grid: VoxelGrid3d,
+  x: number,
+  y: number,
+  z: number,
+  resolution: number,
+  wallThicknessVoxels: number
+): void => {
+  const x0 = x * resolution
+  const x1 = (x * resolution) + resolution
+  const y0 = y * resolution
+  const y1 = (y * resolution) + resolution
+  const z0 = z * resolution
+  const z1 = (z * resolution) + resolution
+  const innerZ0 = z0 + wallThicknessVoxels
+  const innerZ1 = z1 - wallThicknessVoxels
+
+  addFace(
+    tris,
+    [x0, y0, innerZ0],
+    [x1, y0, innerZ0],
+    [x1, y1, innerZ0],
+    [x0, y1, innerZ0]
+  )
+
+  addFace(
+    tris,
+    [x0, y0, innerZ1],
+    [x0, y1, innerZ1],
+    [x1, y1, innerZ1],
+    [x1, y0, innerZ1]
+  )
+
+  const neighborMinusHasZOnX = hasZSurface(grid, x - 1, y, z)
+  const neighborPlusHasZOnX = hasZSurface(grid, x + 1, y, z)
+  const neighborMinusHasZOnY = hasZSurface(grid, x, y - 1, z)
+  const neighborPlusHasZOnY = hasZSurface(grid, x, y + 1, z)
+
+  if (!neighborMinusHasZOnX) {
+    addFace(
+      tris,
+      [x0, y0, z0],
+      [x0, y0, innerZ0],
+      [x0, y1, innerZ0],
+      [x0, y1, z0]
+    )
+
+    addFace(
+      tris,
+      [x0, y0, innerZ1],
+      [x0, y0, z1],
+      [x0, y1, z1],
+      [x0, y1, innerZ1]
+    )
+  }
+
+  if (!neighborPlusHasZOnX) {
+    addFace(
+      tris,
+      [x1, y0, z0],
+      [x1, y1, z0],
+      [x1, y1, innerZ0],
+      [x1, y0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [x1, y0, innerZ1],
+      [x1, y1, innerZ1],
+      [x1, y1, z1],
+      [x1, y0, z1]
+    )
+  }
+
+  if (!neighborMinusHasZOnY) {
+    addFace(
+      tris,
+      [x0, y0, z0],
+      [x1, y0, z0],
+      [x1, y0, innerZ0],
+      [x0, y0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [x0, y0, innerZ1],
+      [x1, y0, innerZ1],
+      [x1, y0, z1],
+      [x0, y0, z1]
+    )
+  }
+
+  if (!neighborPlusHasZOnY) {
+    addFace(
+      tris,
+      [x0, y1, z0],
+      [x0, y1, innerZ0],
+      [x1, y1, innerZ0],
+      [x1, y1, z0]
+    )
+
+    addFace(
+      tris,
+      [x0, y1, innerZ1],
+      [x0, y1, z1],
+      [x1, y1, z1],
+      [x1, y1, innerZ1]
+    )
+  }
+}
+
 const addInnerFacesIfNeeded = (
   tris: Triangle[],
   grid: VoxelGrid3d,
@@ -533,9 +869,13 @@ const addInnerFacesIfNeeded = (
     addInnerFacesForXZOnly(tris, grid, x, y, z, resolution, wallThicknessVoxels)
   } else if (hasX && hasY && !hasZ) {
     addInnerFacesForXYOnly(tris, grid, x, y, z, resolution, wallThicknessVoxels)
+  } else if (hasX && !hasY && !hasZ) {
+    addInnerFacesForXOnly(tris, grid, x, y, z, resolution, wallThicknessVoxels)
+  } else if (!hasX && hasY && !hasZ) {
+    addInnerFacesForYOnly(tris, grid, x, y, z, resolution, wallThicknessVoxels)
+  } else if (!hasX && !hasY && hasZ) {
+    addInnerFacesForZOnly(tris, grid, x, y, z, resolution, wallThicknessVoxels)
   }
-
-  //TODO: need to handle the case where it has 1 surface but not the other two. So like hasX, !hasY, !hasZ. And then the other two combos of that as well.
 }
 
 export const surfaceExtract = (

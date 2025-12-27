@@ -160,6 +160,33 @@ test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
 
 })
 
+test("1x1x1 voxel with only x surfaces generates 24 triangles", async () => {
+  const grid = singleVoxelGrid(0x02)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("voxel-1x1x1-x-only.stl", stl)
+
+  assert.equal(tris.length, 24)
+})
+
+test("1x1x1 voxel with only y surfaces generates 24 triangles", async () => {
+  const grid = singleVoxelGrid(0x04)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("voxel-1x1x1-y-only.stl", stl)
+
+  assert.equal(tris.length, 24)
+})
+
+test("1x1x1 voxel with only z surfaces generates 24 triangles", async () => {
+  const grid = singleVoxelGrid(0x08)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("voxel-1x1x1-z-only.stl", stl)
+
+  assert.equal(tris.length, 24)
+})
+
 test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {
   const grid = createGridWithValues(5, 5, 5, (_, y, z) =>
     isPatternSolid(y, z) ? solidVoxel : (0x08 | 0x04)
