@@ -68,7 +68,6 @@ export const generateQrGrid = (text: string): QrGenerationResult => {
           cubeGrid[x][y][z].clearX()
         }
       }
-      //data[y * size + x] = isModuleFilled ? 1 : 0
     }
   }
 

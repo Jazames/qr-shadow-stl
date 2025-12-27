@@ -106,7 +106,7 @@ test("1x1x1 box with x-axis hole generates 8 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-x-hole.stl", stl)
 
-  assert.equal(tris.length, 8)
+  assert.equal(tris.length, 16)
 })
 
 test("1x1x1 box with y-axis hole generates 8 triangles", async () => {
@@ -116,7 +116,7 @@ test("1x1x1 box with y-axis hole generates 8 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-y-hole.stl", stl)
 
-  assert.equal(tris.length, 8)
+  assert.equal(tris.length, 16)
 })
 
 test("1x1x1 box with z-axis hole generates 8 triangles", async () => {
@@ -126,6 +126,6 @@ test("1x1x1 box with z-axis hole generates 8 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-z-hole.stl", stl)
 
-  assert.equal(tris.length, 8)
+  assert.equal(tris.length, 16)
 
 })

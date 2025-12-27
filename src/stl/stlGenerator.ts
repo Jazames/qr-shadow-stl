@@ -72,7 +72,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
   for (let z = 0; z < grid.sizeZ; z++) {
     for (let y = 0; y < grid.sizeY; y++) {
       for (let x = 0; x < grid.sizeX; x++) {
-        if (!isSolid(grid, x, y, z)) { //TODO: revert to isEmpty
+        if (isEmpty(grid, x, y, z)) {
           continue
         }
 
