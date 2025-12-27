@@ -15,8 +15,8 @@ export type VoxelGrid3d = {
   data: Uint8Array
 }
 
-const resolution = 1000
-const wallThicknessVoxels = 10
+export const DEFAULT_RESOLUTION = 1000
+export const DEFAULT_WALL_THICKNESS_VOXELS = 10
 
 const isSolid = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
   if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
@@ -66,7 +66,11 @@ const addFace = (
   tris.push({ v1: p0, v2: p2, v3: p3 })
 }
 
-export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
+export const surfaceExtract = (
+  grid: VoxelGrid3d,
+  resolution: number = DEFAULT_RESOLUTION,
+  wallThicknessVoxels: number = DEFAULT_WALL_THICKNESS_VOXELS
+): Triangle[] => {
   const tris: Triangle[] = []
 
   for (let z = 0; z < grid.sizeZ; z++) {
@@ -152,6 +156,7 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
             const innerZ0 = z0 + wallThicknessVoxels
             const innerZ1 = z1 - wallThicknessVoxels
 
+            //Inside box
             addFace(
               tris,
               [x0, innerY0, innerZ0],
@@ -183,6 +188,78 @@ export const surfaceExtract = (grid: VoxelGrid3d): Triangle[] => {
               [x1, innerY1, innerZ1],
               [x1, innerY0, innerZ1]
             )
+            
+            //Now handle sides that connect to outside
+            const neighborMinusHasYZ = hasYSurface(grid, x - 1, y, z) && hasZSurface(grid, x - 1, y, z)
+            const neighborPlusHasYZ = hasYSurface(grid, x + 1, y, z) && hasZSurface(grid, x + 1, y, z)
+
+            if (!neighborMinusHasYZ) {
+              addFace(
+                tris,
+                [x0, y0, z0],
+                [x0, y0, z1],
+                [x0, innerY0, innerZ1],
+                [x0, innerY0, innerZ0]
+              )
+
+              addFace(
+                tris,
+                [x0, y0, z0],
+                [x0, innerY0, innerZ0],
+                [x0, innerY1, innerZ0],
+                [x0, y1, z0]
+              )
+
+              addFace(
+                tris,
+                [x0, y1, z1],
+                [x0, innerY1, innerZ1],
+                [x0, innerY0, innerZ1],
+                [x0, y0, z1]
+              )
+
+              addFace(
+                tris,
+                [x0, y1, z1],
+                [x0, y1, z0],
+                [x0, innerY1, innerZ0],
+                [x0, innerY1, innerZ1]
+              )
+            }
+
+            if (!neighborPlusHasYZ) {
+              addFace(
+                tris,
+                [x1, y0, z0],
+                [x1, innerY0, innerZ0],
+                [x1, innerY0, innerZ1],
+                [x1, y0, z1]
+              )
+
+              addFace(
+                tris,
+                [x1, y0, z0],
+                [x1, y1, z0],
+                [x1, innerY1, innerZ0],
+                [x1, innerY0, innerZ0]
+              )
+
+              addFace(
+                tris,
+                [x1, y1, z1],
+                [x1, innerY1, innerZ1],
+                [x1, innerY1, innerZ0],
+                [x1, y1, z0]
+              )
+
+              addFace(
+                tris,
+                [x1, y1, z1],
+                [x1, y0, z1],
+                [x1, innerY0, innerZ1],
+                [x1, innerY1, innerZ1]
+              )
+            }
           }
         }
       }
@@ -229,7 +306,12 @@ export const writeBinaryStl = (tris: Triangle[], voxelSizeMm: number): Uint8Arra
   return new Uint8Array(buffer)
 }
 
-export const gridToBinaryStl = (grid: VoxelGrid3d, voxelSizeMm: number): Uint8Array => {
-  const tris = surfaceExtract(grid)
+export const gridToBinaryStl = (
+  grid: VoxelGrid3d,
+  voxelSizeMm: number,
+  resolution: number = DEFAULT_RESOLUTION,
+  wallThicknessVoxels: number = DEFAULT_WALL_THICKNESS_VOXELS
+): Uint8Array => {
+  const tris = surfaceExtract(grid, resolution, wallThicknessVoxels)
   return writeBinaryStl(tris, voxelSizeMm)
 }

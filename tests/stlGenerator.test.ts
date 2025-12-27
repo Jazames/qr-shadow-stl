@@ -5,6 +5,8 @@ import path from "node:path"
 import { surfaceExtract, writeBinaryStl, type VoxelGrid3d } from "../src/stl/stlGenerator.js"
 
 const solidVoxel = 0x0f
+const testResolution = 10
+const testWallThickness = 1
 
 const createGrid = (
   sizeX: number,
@@ -40,7 +42,7 @@ const singleVoxelGrid = (value: number): VoxelGrid3d => ({
 test("1x1x1 cube generates 12 triangles and valid binary STL", async () => {
   const grid = createGrid(1, 1, 1, () => true)
 
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-1x1x1.stl", stl)
 
@@ -58,14 +60,14 @@ test("1x1x1 cube generates 12 triangles and valid binary STL", async () => {
     // Skip normal (12 bytes) and check vertex positions (9 floats).
     for (let v = 0; v < 9; v++) {
       const coord = view.getFloat32(base + 12 + v * 4, true)
-      assert.ok(coord === 0 || coord === 1000, `unexpected coord ${coord}`)
+      assert.ok(coord === 0 || coord === testResolution, `unexpected coord ${coord}`)
     }
   }
 })
 
 test("3x3x3 cube missing center line along x-axis generates 128 triangles", async () => {
   const grid = createGrid(3, 3, 3, (_, y, z) => !(y === 1 && z === 1))
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-x.stl", stl)
 
@@ -74,7 +76,7 @@ test("3x3x3 cube missing center line along x-axis generates 128 triangles", asyn
 
 test("3x3x3 cube missing center line along y-axis generates 128 triangles", async () => {
   const grid = createGrid(3, 3, 3, (x, _, z) => !(x === 1 && z === 1))
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-y.stl", stl)
 
@@ -83,7 +85,7 @@ test("3x3x3 cube missing center line along y-axis generates 128 triangles", asyn
 
 test("3x3x3 cube missing center line along z-axis generates 128 triangles", async () => {
   const grid = createGrid(3, 3, 3, (x, y, _) => !(x === 1 && y === 1))
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-z.stl", stl)
 
@@ -92,40 +94,40 @@ test("3x3x3 cube missing center line along z-axis generates 128 triangles", asyn
 
 test("2x2x2 cube missing one row along each axis generates 12 triangles", async () => {
   const grid = createGrid(2, 2, 2, (x, y, z) => x + y + z < 2);
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-2x2x2-missing-xyz-row.stl", stl)
 
   assert.equal(tris.length, 36)
 })
 
-test("1x1x1 box with x-axis hole generates 8 triangles", async () => {
+test("1x1x1 box with x-axis hole generates 32 triangles", async () => {
   const grid = singleVoxelGrid(0x08 | 0x04)
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
 
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-x-hole.stl", stl)
 
-  assert.equal(tris.length, 16)
+  assert.equal(tris.length, 32)
 })
 
-test("1x1x1 box with y-axis hole generates 8 triangles", async () => {
+test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
   const grid = singleVoxelGrid( 0x08 | 0x02)
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
 
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-y-hole.stl", stl)
 
-  assert.equal(tris.length, 16)
+  assert.equal(tris.length, 32)
 })
 
-test("1x1x1 box with z-axis hole generates 8 triangles", async () => {
+test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
   const grid = singleVoxelGrid( 0x04 | 0x02)
-  const tris = surfaceExtract(grid)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
 
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-z-hole.stl", stl)
 
-  assert.equal(tris.length, 16)
+  assert.equal(tris.length, 32)
 
 })
