@@ -7,6 +7,16 @@ import { surfaceExtract, writeBinaryStl, type VoxelGrid3d } from "../src/stl/stl
 const solidVoxel = 0x0f
 const testResolution = 10
 const testWallThickness = 1
+const pattern5x5 = [
+  "XXXXX",
+  "X   X",
+  "X X X",
+  "X   X",
+  "XXXXX"
+]
+
+const isPatternSolid = (row: number, col: number): boolean =>
+  pattern5x5[row]?.charAt(col) === "X"
 
 const createGrid = (
   sizeX: number,
@@ -20,6 +30,24 @@ const createGrid = (
     for (let y = 0; y < sizeY; y++) {
       for (let x = 0; x < sizeX; x++) {
         data[idx++] = isSolidVoxel(x, y, z) ? solidVoxel : 0x00
+      }
+    }
+  }
+  return { sizeX, sizeY, sizeZ, data }
+}
+
+const createGridWithValues = (
+  sizeX: number,
+  sizeY: number,
+  sizeZ: number,
+  voxelValue: (x: number, y: number, z: number) => number
+): VoxelGrid3d => {
+  const data = new Uint8Array(sizeX * sizeY * sizeZ)
+  let idx = 0
+  for (let z = 0; z < sizeZ; z++) {
+    for (let y = 0; y < sizeY; y++) {
+      for (let x = 0; x < sizeX; x++) {
+        data[idx++] = voxelValue(x, y, z)
       }
     }
   }
@@ -130,4 +158,37 @@ test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
 
   assert.equal(tris.length, 32)
 
+})
+
+test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {
+  const grid = createGridWithValues(5, 5, 5, (_, y, z) =>
+    isPatternSolid(y, z) ? solidVoxel : (0x08 | 0x04)
+  )
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("pattern-5x5-extruded-x.stl", stl)
+
+  assert.equal(tris.length, 716)
+})
+
+test("5x5 pattern extruded along y-axis generates 428 triangles", async () => {
+  const grid = createGridWithValues(5, 5, 5, (x, _, z) =>
+    isPatternSolid(x, z) ? solidVoxel : (0x08 | 0x02)
+  )
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("pattern-5x5-extruded-y.stl", stl)
+
+  assert.equal(tris.length, 716)
+})
+
+test("5x5 pattern extruded along z-axis generates 428 triangles", async () => {
+  const grid = createGridWithValues(5, 5, 5, (x, y, _) =>
+    isPatternSolid(x, y) ? solidVoxel : (0x04 | 0x02)
+  )
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("pattern-5x5-extruded-z.stl", stl)
+
+  assert.equal(tris.length, 716)
 })

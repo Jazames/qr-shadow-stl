@@ -534,6 +534,8 @@ const addInnerFacesIfNeeded = (
   } else if (hasX && hasY && !hasZ) {
     addInnerFacesForXYOnly(tris, grid, x, y, z, resolution, wallThicknessVoxels)
   }
+
+  //TODO: need to handle the case where it has 1 surface but not the other two. So like hasX, !hasY, !hasZ. And then the other two combos of that as well.
 }
 
 export const surfaceExtract = (
