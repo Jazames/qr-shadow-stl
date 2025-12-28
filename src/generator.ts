@@ -90,18 +90,6 @@ const resolveQrSize = (payloads: Array<QrPayload | null>): number => {
   return first
 }
 
-const carveAlongZ = (cubeGrid: CubeGrid3d, qr: qrcodegen.QrCode, size: number): void => {
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      if (!qr.getModule(x, y)) {
-        for (let z = 0; z < size; z++) {
-          cubeGrid[x][y][z].clearZ()
-        }
-      }
-    }
-  }
-}
-
 const carveAlongX = (cubeGrid: CubeGrid3d, qr: qrcodegen.QrCode, size: number): void => {
   for (let z = 0; z < size; z++) {
     for (let y = 0; y < size; y++) {
@@ -120,6 +108,18 @@ const carveAlongY = (cubeGrid: CubeGrid3d, qr: qrcodegen.QrCode, size: number): 
       if (!qr.getModule(x, z)) {
         for (let y = 0; y < size; y++) {
           cubeGrid[x][y][z].clearY()
+        }
+      }
+    }
+  }
+}
+
+const carveAlongZ = (cubeGrid: CubeGrid3d, qr: qrcodegen.QrCode, size: number): void => {
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if (!qr.getModule(x, y)) {
+        for (let z = 0; z < size; z++) {
+          cubeGrid[x][y][z].clearZ()
         }
       }
     }
@@ -146,6 +146,8 @@ export const generateQrGrid = (options: QrGenerationOptions): QrGenerationResult
   if (topPayload) {
     carveAlongY(cubeGrid, topPayload.qr, size)
   }
+
+  // Trim floating voxels
 
   const voxelGrid = cubeGridToVoxelGrid(cubeGrid)
   const resolution = options.resolution ?? DEFAULT_RESOLUTION

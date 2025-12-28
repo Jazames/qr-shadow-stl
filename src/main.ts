@@ -32,15 +32,15 @@ if (app) {
           <div class="advanced-grid">
             <label class="field">
               <span class="field-label">Cube resolution</span>
-              <input id="resolution-input" type="number" min="1" step="1" value="1000" />
+              <input id="resolution-input" type="number" min="1" step="1" value="100" />
             </label>
             <label class="field">
               <span class="field-label">Wall thickness (voxels)</span>
-              <input id="wall-thickness-input" type="number" min="1" step="1" value="30" />
+              <input id="wall-thickness-input" type="number" min="1" step="1" value="5" />
             </label>
             <label class="field">
               <span class="field-label">Overall size (mm)</span>
-              <input id="size-input" type="number" min="0" step="0.1" placeholder="Optional" />
+              <input id="size-input" type="number" min="0" step="0.1" value="150" />
             </label>
             <p class="field-hint">
               Size scales the full cube. Leave blank to keep the current output scale.

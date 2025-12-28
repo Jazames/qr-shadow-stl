@@ -23,15 +23,10 @@ export class CubeNode {
     this.hasSurfacesNormalToZ = false
   }
 
-  fillX(): void {
-    this.isSolid = true
-  }
-
-  fillY(): void {
-    this.isSolid = true
-  }
-
-  fillZ(): void {
-    this.isSolid = true
+  clearAll(): void {
+    this.isSolid = false
+    this.hasSurfacesNormalToX = false
+    this.hasSurfacesNormalToY = false
+    this.hasSurfacesNormalToZ = false
   }
 }

@@ -917,7 +917,7 @@ export const writeBinaryStl = (tris: Triangle[], voxelSizeMm: number): Uint8Arra
   let offset = headerBytes + 4
 
   const writeVertex = (v: [number, number, number]) => {
-    view.setFloat32(offset, v[0] * voxelSizeMm, true)
+    view.setFloat32(offset + 0, v[0] * voxelSizeMm, true)
     view.setFloat32(offset + 4, v[1] * voxelSizeMm, true)
     view.setFloat32(offset + 8, v[2] * voxelSizeMm, true)
     offset += 12
