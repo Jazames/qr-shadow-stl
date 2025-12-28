@@ -84,7 +84,8 @@ h1 {
   color: #1d2140;
 }
 
-input[type="text"] {
+input[type="text"],
+input[type="number"] {
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
@@ -94,11 +95,41 @@ input[type="text"] {
   transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="number"]:focus {
   outline: none;
   border-color: #4a6bff;
   box-shadow: 0 0 0 3px rgba(74, 107, 255, 0.2);
   background: #fff;
+}
+
+details.advanced {
+  border: 1px solid #e3e7f2;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #f8faff;
+}
+
+details.advanced[open] {
+  background: #f3f6ff;
+}
+
+details.advanced summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #1d2140;
+}
+
+.advanced-grid {
+  margin-top: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.field-hint {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #5a6180;
 }
 
 button {
