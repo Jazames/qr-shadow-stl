@@ -412,34 +412,34 @@ const addInnerFacesForXYOnly = (
 
   addFace(
     tris,
-    [innerX0, innerY0, z0],
-    [innerX0, innerY0, z1],
-    [innerX0, innerY1, z1],
-    [innerX0, innerY1, z0]
-  )
-
-  addFace(
-    tris,
-    [innerX1, innerY0, z0],
-    [innerX1, innerY1, z0],
-    [innerX1, innerY1, z1],
-    [innerX1, innerY0, z1]
-  )
-
-  addFace(
-    tris,
-    [innerX0, innerY0, z0],
-    [innerX1, innerY0, z0],
-    [innerX1, innerY0, z1],
-    [innerX0, innerY0, z1]
-  )
-
-  addFace(
-    tris,
     [innerX0, innerY1, z0],
     [innerX0, innerY1, z1],
+    [innerX0, innerY0, z1],
+    [innerX0, innerY0, z0]
+  )
+
+  addFace(
+    tris,
+    [innerX1, innerY0, z1],
     [innerX1, innerY1, z1],
-    [innerX1, innerY1, z0]
+    [innerX1, innerY1, z0],
+    [innerX1, innerY0, z0]
+  )
+
+  addFace(
+    tris,
+    [innerX0, innerY0, z1],
+    [innerX1, innerY0, z1],
+    [innerX1, innerY0, z0],
+    [innerX0, innerY0, z0]
+  )
+
+  addFace(
+    tris,
+    [innerX1, innerY1, z0],
+    [innerX1, innerY1, z1],
+    [innerX0, innerY1, z1],
+    [innerX0, innerY1, z0]
   )
 
   const neighborMinusHasXY = hasXSurface(grid, x, y, z - 1) && hasYSurface(grid, x, y, z - 1)
@@ -556,18 +556,18 @@ const addInnerFacesForXOnly = (
   if (!neighborMinusHasXOnY) {
     addFace(
       tris,
-      [x0, y0, z0],
-      [x0, y0, z1],
+      [innerX0, y0, z0],
       [innerX0, y0, z1],
-      [innerX0, y0, z0]
+      [x0, y0, z1],
+      [x0, y0, z0]
     )
 
     addFace(
       tris,
-      [innerX1, y0, z0],
-      [innerX1, y0, z1],
+      [x1, y0, z0],
       [x1, y0, z1],
-      [x1, y0, z0]
+      [innerX1, y0, z1],
+      [innerX1, y0, z0]
     )
   }
 
