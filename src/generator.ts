@@ -152,13 +152,13 @@ const areConnected = (nodeA: CubeNode, nodeB: CubeNode, axis: 'x' | 'y' | 'z'): 
   }
   switch (axis) {
     case 'x':
-      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) )//&& !onlyHasXSurfaces(nodeA) && !onlyHasXSurfaces(nodeB))
+      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) && !(onlyHasXSurfaces(nodeA) && onlyHasXSurfaces(nodeB)))
         //&& (!(onlyHasYSurfaces(nodeA) && onlyHasZSurfaces(nodeB)) || !(onlyHasZSurfaces(nodeA) && onlyHasYSurfaces(nodeB))))
     case 'y':
-      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) )//&& !onlyHasYSurfaces(nodeA) && !onlyHasYSurfaces(nodeB))
+      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) && !(onlyHasYSurfaces(nodeA) && onlyHasYSurfaces(nodeB)))
         //&& (!(onlyHasXSurfaces(nodeA) && onlyHasZSurfaces(nodeB)) || !(onlyHasZSurfaces(nodeA) && onlyHasXSurfaces(nodeB))))
     case 'z':
-      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) )//&& !onlyHasZSurfaces(nodeA) && !onlyHasZSurfaces(nodeB))
+      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) && !(onlyHasZSurfaces(nodeA) && onlyHasZSurfaces(nodeB)))
         //&& (!(onlyHasXSurfaces(nodeA) && onlyHasYSurfaces(nodeB)) || !(onlyHasYSurfaces(nodeA) && onlyHasXSurfaces(nodeB))))
     default:
       return false
@@ -277,7 +277,7 @@ export const trimFloatingVoxels = (cubeGrid: CubeGrid3d): void => {
   // Identify the largest connected component
   let largestSet: Set<CubeNode> | null = null
   for (const set of sets) {
-    console.log(`Connected component size: ${set.size}`)
+    //console.log(`Connected component size: ${set.size}`)
     if (!largestSet || set.size > largestSet.size) {
       largestSet = set
     }
