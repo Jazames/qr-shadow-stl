@@ -1,8 +1,8 @@
-import { qrcodegen } from './vendor/nayuki/qrcodegen'
-import { gridToBinaryStl } from './stl/stlGenerator'
-import { DEFAULT_RESOLUTION } from './stl/stlGenerator'
-import type { VoxelGrid3d } from './stl/stlGenerator'
-import { CubeNode } from './voxel/cubeNode'
+import { qrcodegen } from './vendor/nayuki/qrcodegen.js'
+import { gridToBinaryStl } from './stl/stlGenerator.js'
+import { DEFAULT_RESOLUTION } from './stl/stlGenerator.js'
+import type { VoxelGrid3d } from './stl/stlGenerator.js'
+import { CubeNode } from './voxel/cubeNode.js'
 
 export type BoolGrid2d = {
   width: number
@@ -126,6 +126,176 @@ const carveAlongZ = (cubeGrid: CubeGrid3d, qr: qrcodegen.QrCode, size: number): 
   }
 }
 
+const isActiveNode = (node: CubeNode): boolean => {
+  return node.isSolid || node.hasSurfacesNormalToX || node.hasSurfacesNormalToY || node.hasSurfacesNormalToZ
+}
+
+const onlyHasXSurfaces = (node: CubeNode): boolean => {
+  return !node.isSolid && node.hasSurfacesNormalToX && !node.hasSurfacesNormalToY && !node.hasSurfacesNormalToZ
+}
+
+const onlyHasYSurfaces = (node: CubeNode): boolean => {
+  return !node.isSolid && !node.hasSurfacesNormalToX && node.hasSurfacesNormalToY && !node.hasSurfacesNormalToZ
+}
+
+const onlyHasZSurfaces = (node: CubeNode): boolean => {
+  return !node.isSolid && !node.hasSurfacesNormalToX && !node.hasSurfacesNormalToY && node.hasSurfacesNormalToZ
+}
+
+const hasAnySurfaces = (node: CubeNode): boolean => {
+  return node.hasSurfacesNormalToX || node.hasSurfacesNormalToY || node.hasSurfacesNormalToZ
+}
+
+const areConnected = (nodeA: CubeNode, nodeB: CubeNode, axis: 'x' | 'y' | 'z'): boolean => {
+  if (nodeA.isSolid && nodeB.isSolid) {
+    return true
+  }
+  switch (axis) {
+    case 'x':
+      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) )//&& !onlyHasXSurfaces(nodeA) && !onlyHasXSurfaces(nodeB))
+        //&& (!(onlyHasYSurfaces(nodeA) && onlyHasZSurfaces(nodeB)) || !(onlyHasZSurfaces(nodeA) && onlyHasYSurfaces(nodeB))))
+    case 'y':
+      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) )//&& !onlyHasYSurfaces(nodeA) && !onlyHasYSurfaces(nodeB))
+        //&& (!(onlyHasXSurfaces(nodeA) && onlyHasZSurfaces(nodeB)) || !(onlyHasZSurfaces(nodeA) && onlyHasXSurfaces(nodeB))))
+    case 'z':
+      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) )//&& !onlyHasZSurfaces(nodeA) && !onlyHasZSurfaces(nodeB))
+        //&& (!(onlyHasXSurfaces(nodeA) && onlyHasYSurfaces(nodeB)) || !(onlyHasYSurfaces(nodeA) && onlyHasXSurfaces(nodeB))))
+    default:
+      return false
+  }
+}
+
+const connectSets = (sets: Array<Set<CubeNode>>, nodeA: CubeNode, nodeB: CubeNode): Array<Set<CubeNode>> => {
+  const newSets: Array<Set<CubeNode>> = []
+  
+  // If no sets exist yet, create the first set
+  if (sets.length === 0) {
+    newSets.push(new Set<CubeNode>([nodeA, nodeB]))
+    return newSets
+  }
+
+  // Check existing sets for membership, and merge as needed
+  let foundA = false
+  let foundB = false
+  for (let i = 0; i < sets.length; i++) {
+    const setA = sets[i]
+    if (setA.has(nodeA)) {
+      foundA = true
+      for (let j = 0; j < sets.length; j++) {
+        if (i != j && sets[j].has(nodeB)) {
+          foundB = true
+          const mergedSet = new Set<CubeNode>([...setA, ...sets[j]])
+          newSets.push(mergedSet)
+        }
+      }
+    }
+  }
+
+  // Neither node found in existing sets, create a new set
+  if (!foundA && !foundB) {
+    newSets.push(new Set<CubeNode>([nodeA, nodeB]))
+  }
+
+  // Node A found, Node B not found - add B to A's set
+  if (foundA && !foundB) {
+    for (let i = 0; i < sets.length; i++) {
+      const set = sets[i]
+      if (set.has(nodeA)) {
+        set.add(nodeB)
+        newSets.push(set)
+      }
+    }
+  }
+  
+  // Node B found, Node A not found - add A to B's set
+  if (!foundA && foundB) {
+    for (let i = 0; i < sets.length; i++) {
+      const set = sets[i]
+      if (set.has(nodeB)) {
+        set.add(nodeA)
+        newSets.push(set)
+      }
+    }
+  }
+
+  // Need to add in other sets that were not involved in the merge
+  for (let i = 0; i < sets.length; i++) {
+    const set = sets[i]
+    if (!set.has(nodeA) && !set.has(nodeB)) {
+      newSets.push(set)
+    }
+  }
+  return newSets
+}
+
+
+
+export const trimFloatingVoxels = (cubeGrid: CubeGrid3d): void => {
+  const sizeX = cubeGrid.length
+  const sizeY = sizeX > 0 ? cubeGrid[0].length : 0
+  const sizeZ = sizeY > 0 ? cubeGrid[0][0].length : 0
+
+  let sets: Array<Set<CubeNode>> = []
+
+  for (let x = 0; x < sizeX; x++) {
+    for (let y = 0; y < sizeY; y++) {
+      for (let z = 0; z < sizeZ; z++) {
+        const node = cubeGrid[x][y][z]
+        const nodePlusX = x + 1 < sizeX ? cubeGrid[x + 1][y][z] : null
+        const nodePlusY = y + 1 < sizeY ? cubeGrid[x][y + 1][z] : null
+        const nodePlusZ = z + 1 < sizeZ ? cubeGrid[x][y][z + 1] : null
+
+        if (nodePlusX && areConnected(node, nodePlusX, 'x')) {
+          sets = connectSets(sets, node, nodePlusX)
+        }
+
+        if (nodePlusY && areConnected(node, nodePlusY, 'y')) {
+          sets = connectSets(sets, node, nodePlusY)
+        }
+
+        if (nodePlusZ && areConnected(node, nodePlusZ, 'z')) {
+          sets = connectSets(sets, node, nodePlusZ)
+        }
+
+        // If it's a floating node we'll put it in its own set
+        if (hasAnySurfaces(node)) {
+          let found = false
+          for (const set of sets) {
+            if (set.has(node)) {
+              found = true
+              break
+            }
+          }
+          if (!found) {
+            sets.push(new Set<CubeNode>([node]))
+          }
+        }
+      }
+    }
+  }
+
+  // Identify the largest connected component
+  let largestSet: Set<CubeNode> | null = null
+  for (const set of sets) {
+    console.log(`Connected component size: ${set.size}`)
+    if (!largestSet || set.size > largestSet.size) {
+      largestSet = set
+    }
+  }
+  
+  // Clear all nodes not in the largest connected component
+  for (let x = 0; x < sizeX; x++) {
+    for (let y = 0; y < sizeY; y++) {
+      for (let z = 0; z < sizeZ; z++) {
+        const node = cubeGrid[x][y][z]
+        if (isActiveNode(node) && (!largestSet || !largestSet.has(node))) {
+          node.clearAll()
+        }
+      }
+    }
+  }
+}
+
 export const generateQrGrid = (options: QrGenerationOptions): QrGenerationResult => {
   const frontPayload = encodeQr(options.frontText)
   const rightPayload = encodeQr(options.rightText)
@@ -148,6 +318,7 @@ export const generateQrGrid = (options: QrGenerationOptions): QrGenerationResult
   }
 
   // Trim floating voxels
+  trimFloatingVoxels(cubeGrid)
 
   const voxelGrid = cubeGridToVoxelGrid(cubeGrid)
   const resolution = options.resolution ?? DEFAULT_RESOLUTION
