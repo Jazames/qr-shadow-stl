@@ -81,7 +81,7 @@ const addOuterFaces = (
   const z0 = z * resolution
   const z1 = (z * resolution) + resolution
 
-  if (isEmpty(grid, x + 1, y, z) && hasXSurface(grid, x, y, z)) {
+  if (!hasXSurface(grid, x + 1, y, z) && hasXSurface(grid, x, y, z)) {
     addFace(
       tris,
       [x1, y0, z0],
@@ -91,7 +91,7 @@ const addOuterFaces = (
     )
   }
 
-  if (isEmpty(grid, x - 1, y, z) && hasXSurface(grid, x, y, z)) {
+  if (!hasXSurface(grid, x - 1, y, z) && hasXSurface(grid, x, y, z)) {
     addFace(
       tris,
       [x0, y0, z0],
