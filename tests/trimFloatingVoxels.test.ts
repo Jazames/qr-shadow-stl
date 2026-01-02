@@ -543,3 +543,90 @@ test("trimFloatingVoxels keeps XSS for SYXSS along the z-axis", async () => {
   assert.equal(cubeGrid[0][0][3].isSolid, true)
   assert.equal(cubeGrid[0][0][4].isSolid, true)
 })
+
+test("trimFloatingVoxels keeps AY(YZ)ZA along the x-axis", async () => {
+  const buildGrid = () =>
+    createCubeGridWithNodes(5, 1, 1, (x) => {
+      if (x === 0 || x === 4) {
+        return makeNode({ solid: true })
+      }
+      if (x === 1) {
+        return makeNode({ surfaces: { y: true } })
+      }
+      if (x === 2) {
+        return makeNode({ surfaces: { y: true, z: true } })
+      }
+      if (x === 3) {
+        return makeNode({ surfaces: { z: true } })
+      }
+      return makeNode()
+    })
+
+  const cubeGrid = buildGrid()
+  const before = buildGrid()
+
+  trimFloatingVoxels(cubeGrid)
+  await writeGridPair("trim-ayyzzx-x-axis", before, cubeGrid)
+
+  assert.equal(countActive(cubeGrid), 5)
+  assert.equal(cubeGrid[0][0][0].isSolid, true)
+  assert.equal(cubeGrid[4][0][0].isSolid, true)
+})
+
+test("trimFloatingVoxels keeps AY(YZ)ZA along the y-axis", async () => {
+  const buildGrid = () =>
+    createCubeGridWithNodes(1, 5, 1, (_, y) => {
+      if (y === 0 || y === 4) {
+        return makeNode({ solid: true })
+      }
+      if (y === 1) {
+        return makeNode({ surfaces: { x: true } })
+      }
+      if (y === 2) {
+        return makeNode({ surfaces: { x: true, z: true } })
+      }
+      if (y === 3) {
+        return makeNode({ surfaces: { z: true } })
+      }
+      return makeNode()
+    })
+
+  const cubeGrid = buildGrid()
+  const before = buildGrid()
+
+  trimFloatingVoxels(cubeGrid)
+  await writeGridPair("trim-ayyzzx-y-axis", before, cubeGrid)
+
+  assert.equal(countActive(cubeGrid), 5)
+  assert.equal(cubeGrid[0][0][0].isSolid, true)
+  assert.equal(cubeGrid[0][4][0].isSolid, true)
+})
+
+test("trimFloatingVoxels keeps AY(YZ)ZA along the z-axis", async () => {
+  const buildGrid = () =>
+    createCubeGridWithNodes(1, 1, 5, (_, __, z) => {
+      if (z === 0 || z === 4) {
+        return makeNode({ solid: true })
+      }
+      if (z === 1) {
+        return makeNode({ surfaces: { x: true } })
+      }
+      if (z === 2) {
+        return makeNode({ surfaces: { x: true, y: true } })
+      }
+      if (z === 3) {
+        return makeNode({ surfaces: { y: true } })
+      }
+      return makeNode()
+    })
+
+  const cubeGrid = buildGrid()
+  const before = buildGrid()
+
+  trimFloatingVoxels(cubeGrid)
+  await writeGridPair("trim-ayyzzx-z-axis", before, cubeGrid)
+
+  assert.equal(countActive(cubeGrid), 5)
+  assert.equal(cubeGrid[0][0][0].isSolid, true)
+  assert.equal(cubeGrid[0][0][4].isSolid, true)
+})

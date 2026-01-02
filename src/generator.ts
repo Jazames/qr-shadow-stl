@@ -130,36 +130,25 @@ const isActiveNode = (node: CubeNode): boolean => {
   return node.isSolid || node.hasSurfacesNormalToX || node.hasSurfacesNormalToY || node.hasSurfacesNormalToZ
 }
 
-const onlyHasXSurfaces = (node: CubeNode): boolean => {
-  return !node.isSolid && node.hasSurfacesNormalToX && !node.hasSurfacesNormalToY && !node.hasSurfacesNormalToZ
-}
-
-const onlyHasYSurfaces = (node: CubeNode): boolean => {
-  return !node.isSolid && !node.hasSurfacesNormalToX && node.hasSurfacesNormalToY && !node.hasSurfacesNormalToZ
-}
-
-const onlyHasZSurfaces = (node: CubeNode): boolean => {
-  return !node.isSolid && !node.hasSurfacesNormalToX && !node.hasSurfacesNormalToY && node.hasSurfacesNormalToZ
-}
-
 const hasAnySurfaces = (node: CubeNode): boolean => {
   return node.hasSurfacesNormalToX || node.hasSurfacesNormalToY || node.hasSurfacesNormalToZ
 }
 
 const areConnected = (nodeA: CubeNode, nodeB: CubeNode, axis: 'x' | 'y' | 'z'): boolean => {
-  if (nodeA.isSolid && nodeB.isSolid) {
-    return true
-  }
+  const hasXSurfaceA = nodeA.hasSurfacesNormalToX || nodeA.isSolid
+  const hasYSurfaceA = nodeA.hasSurfacesNormalToY || nodeA.isSolid
+  const hasZSurfaceA = nodeA.hasSurfacesNormalToZ || nodeA.isSolid
+  const hasXSurfaceB = nodeB.hasSurfacesNormalToX || nodeB.isSolid
+  const hasYSurfaceB = nodeB.hasSurfacesNormalToY || nodeB.isSolid
+  const hasZSurfaceB = nodeB.hasSurfacesNormalToZ || nodeB.isSolid
+
   switch (axis) {
     case 'x':
-      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) && !(onlyHasXSurfaces(nodeA) && onlyHasXSurfaces(nodeB)))
-        //&& (!(onlyHasYSurfaces(nodeA) && onlyHasZSurfaces(nodeB)) || !(onlyHasZSurfaces(nodeA) && onlyHasYSurfaces(nodeB))))
+      return (hasYSurfaceA && hasYSurfaceB) || (hasZSurfaceA && hasZSurfaceB)
     case 'y':
-      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) && !(onlyHasYSurfaces(nodeA) && onlyHasYSurfaces(nodeB)))
-        //&& (!(onlyHasXSurfaces(nodeA) && onlyHasZSurfaces(nodeB)) || !(onlyHasZSurfaces(nodeA) && onlyHasXSurfaces(nodeB))))
+      return (hasXSurfaceA && hasXSurfaceB) || (hasZSurfaceA && hasZSurfaceB)
     case 'z':
-      return (hasAnySurfaces(nodeA) && hasAnySurfaces(nodeB) && !(onlyHasZSurfaces(nodeA) && onlyHasZSurfaces(nodeB)))
-        //&& (!(onlyHasXSurfaces(nodeA) && onlyHasYSurfaces(nodeB)) || !(onlyHasYSurfaces(nodeA) && onlyHasXSurfaces(nodeB))))
+      return (hasXSurfaceA && hasXSurfaceB) || (hasYSurfaceA && hasYSurfaceB)
     default:
       return false
   }
@@ -242,19 +231,31 @@ export const trimFloatingVoxels = (cubeGrid: CubeGrid3d): void => {
       for (let z = 0; z < sizeZ; z++) {
         const node = cubeGrid[x][y][z]
         const nodePlusX = x + 1 < sizeX ? cubeGrid[x + 1][y][z] : null
+        const nodeMinusX = x - 1 >= 0 ? cubeGrid[x - 1][y][z] : null 
         const nodePlusY = y + 1 < sizeY ? cubeGrid[x][y + 1][z] : null
+        const nodeMinusY = y - 1 >= 0 ? cubeGrid[x][y - 1][z] : null
         const nodePlusZ = z + 1 < sizeZ ? cubeGrid[x][y][z + 1] : null
+        const nodeMinusZ = z - 1 >= 0 ? cubeGrid[x][y][z - 1] : null
 
         if (nodePlusX && areConnected(node, nodePlusX, 'x')) {
           sets = connectSets(sets, node, nodePlusX)
+        }
+        if (nodeMinusX && areConnected(node, nodeMinusX, 'x')) {
+          sets = connectSets(sets, node, nodeMinusX)
         }
 
         if (nodePlusY && areConnected(node, nodePlusY, 'y')) {
           sets = connectSets(sets, node, nodePlusY)
         }
+        if (nodeMinusY && areConnected(node, nodeMinusY, 'y')) {
+          sets = connectSets(sets, node, nodeMinusY)
+        }
 
         if (nodePlusZ && areConnected(node, nodePlusZ, 'z')) {
           sets = connectSets(sets, node, nodePlusZ)
+        }
+        if (nodeMinusZ && areConnected(node, nodeMinusZ, 'z')) {
+          sets = connectSets(sets, node, nodeMinusZ)
         }
 
         // If it's a floating node we'll put it in its own set
