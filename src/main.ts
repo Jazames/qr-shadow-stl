@@ -63,6 +63,93 @@ if (app) {
   const sizeInput = app.querySelector<HTMLInputElement>('#size-input')
   const downloadBtn = app.querySelector<HTMLButtonElement>('#download-btn')
   const statusArea = app.querySelector<HTMLDivElement>('.status-area')
+  const adjectives = [
+    'no-cap',
+    'based',
+    'cringe',
+    'mid',
+    'bussin',
+    'fire',
+    'sus',
+    'valid',
+    'unhinged',
+    'feral',
+    'delulu',
+    'goated',
+    'ick',
+    'slay',
+    'cooked',
+    'bricked',
+    'low-key',
+    'high-key',
+    'aesthetic',
+    'zesty',
+    'terminally-online',
+    'sketch',
+    'hard',
+    'capped',
+    'rizzed',
+    'lit',
+    'deadass',
+    'aura',
+    'negative-aura',
+    'sigma',
+    'beta',
+    'skibidi',
+    'mad-lit',
+    'drip',
+    'yeet'
+  ]
+  const nouns = [
+    'unc',
+    'bro',
+    'bruh',
+    'dude',
+    'npc',
+    'main-character',
+    'op',
+    'chat',
+    'goober',
+    'gremlin',
+    'menace',
+    'pick-me',
+    'tryhard',
+    'bozo',
+    'cornball',
+    'weirdo',
+    'hater',
+    'glazer',
+    'fanboy',
+    'fangirl',
+    'terminally-online',
+    'oldhead',
+    'rando',
+    'guy',
+    'shorty',
+    'yunc',
+    'chad',
+    'giga-chad',
+    'sigma',
+    'alpha',
+    'beta',
+    'boomer',
+    'millennial',
+    'zoomer',
+    'ipad-kid',
+    'fam',
+    'sis',
+    'homie',
+    'goat',
+    'rizzler',
+    'oomf',
+    'stan',
+    'wordcel',
+    'shape-rotator',
+    'soyboy'
+  ]
+
+  const pickRandom = (items: string[]) => items[Math.floor(Math.random() * items.length)]
+  const makeFilename = () => `${pickRandom(adjectives)}-qr-shadow-for-${pickRandom(nouns)}.stl`
 
   const setStatus = (message: string) => {
     if (statusArea) {
@@ -104,7 +191,7 @@ if (app) {
 
       const anchor = document.createElement('a')
       anchor.href = url
-      anchor.download = 'qr-shadow.stl'
+      anchor.download = makeFilename()
       document.body.appendChild(anchor)
       anchor.click()
       anchor.remove()
