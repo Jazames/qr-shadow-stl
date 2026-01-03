@@ -99,7 +99,7 @@ test("3x3x3 cube missing center line along x-axis generates 128 triangles", asyn
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-x.stl", stl)
 
-  assert.equal(tris.length, 128)
+  assert.equal(tris.length, 560)
 })
 
 test("3x3x3 cube missing center line along y-axis generates 128 triangles", async () => {
@@ -108,7 +108,7 @@ test("3x3x3 cube missing center line along y-axis generates 128 triangles", asyn
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-y.stl", stl)
 
-  assert.equal(tris.length, 128)
+  assert.equal(tris.length, 560)
 })
 
 test("3x3x3 cube missing center line along z-axis generates 128 triangles", async () => {
@@ -117,16 +117,25 @@ test("3x3x3 cube missing center line along z-axis generates 128 triangles", asyn
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-z.stl", stl)
 
-  assert.equal(tris.length, 128)
+  assert.equal(tris.length, 560)
 })
 
-test("2x2x2 cube missing one row along each axis generates 12 triangles", async () => {
+test("2x2x2 cube missing one row along each axis generates 612 triangles", async () => {
   const grid = createGrid(2, 2, 2, (x, y, z) => x + y + z < 2);
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-2x2x2-missing-xyz-row.stl", stl)
 
-  assert.equal(tris.length, 36)
+  assert.equal(tris.length, 612)
+})
+
+test("1x1x1 empty voxel generates 144 triangles", async () => {
+  const grid = singleVoxelGrid(0x00)
+  const tris = surfaceExtract(grid, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("voxel-1x1x1-empty.stl", stl)
+
+  assert.equal(tris.length, 144)
 })
 
 test("1x1x1 box with x-axis hole generates 32 triangles", async () => {
@@ -160,31 +169,31 @@ test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
 
 })
 
-test("1x1x1 voxel with only x surfaces generates 24 triangles", async () => {
+test("1x1x1 voxel with only x surfaces generates 216 triangles", async () => {
   const grid = singleVoxelGrid(0x02)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-x-only.stl", stl)
 
-  assert.equal(tris.length, 24)
+  assert.equal(tris.length, 216)
 })
 
-test("1x1x1 voxel with only y surfaces generates 24 triangles", async () => {
+test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
   const grid = singleVoxelGrid(0x04)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-y-only.stl", stl)
 
-  assert.equal(tris.length, 24)
+  assert.equal(tris.length, 216)
 })
 
-test("1x1x1 voxel with only z surfaces generates 24 triangles", async () => {
+test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
   const grid = singleVoxelGrid(0x08)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-z-only.stl", stl)
 
-  assert.equal(tris.length, 24)
+  assert.equal(tris.length, 216)
 })
 
 test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {

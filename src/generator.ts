@@ -319,7 +319,7 @@ export const generateQrGrid = (options: QrGenerationOptions): QrGenerationResult
   }
 
   // Trim floating voxels
-  trimFloatingVoxels(cubeGrid)
+  //trimFloatingVoxels(cubeGrid)
 
   const voxelGrid = cubeGridToVoxelGrid(cubeGrid)
   const resolution = options.resolution ?? DEFAULT_RESOLUTION
