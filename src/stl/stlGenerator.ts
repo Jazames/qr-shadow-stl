@@ -199,18 +199,18 @@ const addPosXFaces = (
   if (!hasZ) {
     addFace(
       tris,
-      [innerX1, innerY0, z0],
-      [innerX1, innerY1, z0],
+      [innerX1, innerY0, innerZ0],
       [innerX1, innerY1, innerZ0],
-      [innerX1, innerY0, innerZ0]
+      [innerX1, innerY1, z0],
+      [innerX1, innerY0, z0]
     )
 
     addFace(
       tris,
-      [innerX1, innerY0, innerZ1],
-      [innerX1, innerY1, innerZ1],
+      [innerX1, innerY0, z1],
       [innerX1, innerY1, z1],
-      [innerX1, innerY0, z1]
+      [innerX1, innerY1, innerZ1],
+      [innerX1, innerY0, innerZ1]
     )
   }
 }
@@ -341,18 +341,18 @@ const addNegXFaces = (
   if (!hasY) {
     addFace(
       tris,
-      [innerX0, y0, innerZ1],
-      [innerX0, innerY0, innerZ1],
+      [innerX0, y0, innerZ0],
       [innerX0, innerY0, innerZ0],
-      [innerX0, y0, innerZ0]
+      [innerX0, innerY0, innerZ1],
+      [innerX0, y0, innerZ1]
     )
 
     addFace(
       tris,
-      [innerX0, innerY1, innerZ1],
-      [innerX0, y1, innerZ1],
+      [innerX0, innerY1, innerZ0],
       [innerX0, y1, innerZ0],
-      [innerX0, innerY1, innerZ0]
+      [innerX0, y1, innerZ1],
+      [innerX0, innerY1, innerZ1]
     )
   }
 
@@ -501,18 +501,18 @@ const addPosYFaces = (
   if (!hasX) {
     addFace(
       tris,
-      [x0, innerY1, innerZ1],
-      [innerX0, innerY1, innerZ1],
+      [x0, innerY1, innerZ0],
       [innerX0, innerY1, innerZ0],
-      [x0, innerY1, innerZ0]
+      [innerX0, innerY1, innerZ1],
+      [x0, innerY1, innerZ1]
     )
 
     addFace(
       tris,
-      [innerX1, innerY1, innerZ1],
-      [x1, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ0],
       [x1, innerY1, innerZ0],
-      [innerX1, innerY1, innerZ0]
+      [x1, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ1]
     )
   }
 
@@ -679,18 +679,18 @@ const addNegYFaces = (
   if (!hasZ) {
     addFace(
       tris,
-      [innerX0, innerY0, z0],
-      [innerX1, innerY0, z0],
+      [innerX0, innerY0, innerZ0],
       [innerX1, innerY0, innerZ0],
-      [innerX0, innerY0, innerZ0]
+      [innerX1, innerY0, z0],
+      [innerX0, innerY0, z0]
     )
 
     addFace(
       tris,
-      [innerX0, innerY0, innerZ1],
-      [innerX1, innerY0, innerZ1],
+      [innerX0, innerY0, z1],
       [innerX1, innerY0, z1],
-      [innerX0, innerY0, z1]
+      [innerX1, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ1]
     )
   }
 }
@@ -821,36 +821,36 @@ const addPosZFaces = (
   if (!hasX) {
     addFace(
       tris,
-      [x0, innerY0, innerZ1],
-      [innerX0, innerY0, innerZ1],
+      [x0, innerY1, innerZ1],
       [innerX0, innerY1, innerZ1],
-      [x0, innerY1, innerZ1]
+      [innerX0, innerY0, innerZ1],
+      [x0, innerY0, innerZ1]
     )
 
     addFace(
       tris,
-      [innerX1, innerY0, innerZ1],
-      [x1, innerY0, innerZ1],
+      [innerX1, innerY1, innerZ1],
       [x1, innerY1, innerZ1],
-      [innerX1, innerY1, innerZ1]
+      [x1, innerY0, innerZ1],
+      [innerX1, innerY0, innerZ1]
     )
   }
 
   if (!hasY) {
     addFace(
       tris,
-      [innerX0, y0, innerZ1],
-      [innerX1, y0, innerZ1],
+      [innerX0, innerY0, innerZ1],
       [innerX1, innerY0, innerZ1],
-      [innerX0, innerY0, innerZ1]
+      [innerX1, y0, innerZ1],
+      [innerX0, y0, innerZ1]
     )
 
     addFace(
       tris,
-      [innerX0, innerY1, innerZ1],
-      [innerX1, innerY1, innerZ1],
+      [innerX0, y1, innerZ1],
       [innerX1, y1, innerZ1],
-      [innerX0, y1, innerZ1]
+      [innerX1, innerY1, innerZ1],
+      [innerX0, innerY1, innerZ1]
     )
   }
 }
