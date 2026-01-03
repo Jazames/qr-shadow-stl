@@ -147,41 +147,6 @@ const addPosXFaces = (
       [innerX1, innerY0, innerZ0]
     )
 
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX1, y0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY0, innerZ0],
-        [innerX1, y0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY1, innerZ1],
-        [innerX1, y1, innerZ1],
-        [innerX1, y1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX1, innerY0, z0],
-        [innerX1, innerY1, z0],
-        [innerX1, innerY1, innerZ0],
-        [innerX1, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, innerY1, z1],
-        [innerX1, innerY0, z1]
-      )
-    }
   } else {
     //Case where hasX is false
     if (neighborOutOfBounds) {
@@ -218,42 +183,6 @@ const addPosXFaces = (
 
     //Inner faces
 
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX1, y0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY0, innerZ0],
-        [innerX1, y0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY1, innerZ1],
-        [innerX1, y1, innerZ1],
-        [innerX1, y1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX1, innerY0, z0],
-        [innerX1, innerY1, z0],
-        [innerX1, innerY1, innerZ0],
-        [innerX1, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, innerY1, z1],
-        [innerX1, innerY0, z1]
-      )
-    }
-
     addFace(
       tris,
       [innerX1, innerY0, innerZ0],
@@ -281,6 +210,42 @@ const addPosXFaces = (
       [innerX1, innerY1, innerZ0],
       [x1, innerY1, innerZ0],
       [x1, innerY1, innerZ1]
+    )
+  }
+
+  if (!hasY) {
+    addFace(
+      tris,
+      [innerX1, y0, innerZ1],
+      [innerX1, innerY0, innerZ1],
+      [innerX1, innerY0, innerZ0],
+      [innerX1, y0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, innerY1, innerZ1],
+      [innerX1, y1, innerZ1],
+      [innerX1, y1, innerZ0],
+      [innerX1, innerY1, innerZ0]
+    )
+  }
+
+  if (!hasZ) {
+    addFace(
+      tris,
+      [innerX1, innerY0, z0],
+      [innerX1, innerY1, z0],
+      [innerX1, innerY1, innerZ0],
+      [innerX1, innerY0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ1],
+      [innerX1, innerY1, innerZ1],
+      [innerX1, innerY1, z1],
+      [innerX1, innerY0, z1]
     )
   }
 }
@@ -373,41 +338,6 @@ const addNegXFaces = (
       [innerX0, innerY0, innerZ0]
     )
 
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX0, y0, innerZ1],
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ0],
-        [innerX0, y0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ1],
-        [innerX0, y1, innerZ1],
-        [innerX0, y1, innerZ0],
-        [innerX0, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX0, innerY0, z0],
-        [innerX0, innerY1, z0],
-        [innerX0, innerY1, innerZ0],
-        [innerX0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY1, innerZ1],
-        [innerX0, innerY1, z1],
-        [innerX0, innerY0, z1]
-      )
-    }
   } else {
     //Case where hasX is false
     if (neighborOutOfBounds) {
@@ -444,42 +374,6 @@ const addNegXFaces = (
 
     //Inner faces
 
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX0, y0, innerZ1],
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ0],
-        [innerX0, y0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ1],
-        [innerX0, y1, innerZ1],
-        [innerX0, y1, innerZ0],
-        [innerX0, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX0, innerY0, z0],
-        [innerX0, innerY1, z0],
-        [innerX0, innerY1, innerZ0],
-        [innerX0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY1, innerZ1],
-        [innerX0, innerY1, z1],
-        [innerX0, innerY0, z1]
-      )
-    }
-
     addFace(
       tris,
       [innerX0, innerY0, innerZ0],
@@ -507,6 +401,42 @@ const addNegXFaces = (
       [innerX0, innerY1, innerZ0],
       [x0, innerY1, innerZ0],
       [x0, innerY1, innerZ1]
+    )
+  }
+
+  if (!hasY) {
+    addFace(
+      tris,
+      [innerX0, y0, innerZ1],
+      [innerX0, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ0],
+      [innerX0, y0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX0, innerY1, innerZ1],
+      [innerX0, y1, innerZ1],
+      [innerX0, y1, innerZ0],
+      [innerX0, innerY1, innerZ0]
+    )
+  }
+
+  if (!hasZ) {
+    addFace(
+      tris,
+      [innerX0, innerY0, z0],
+      [innerX0, innerY1, z0],
+      [innerX0, innerY1, innerZ0],
+      [innerX0, innerY0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX0, innerY0, innerZ1],
+      [innerX0, innerY1, innerZ1],
+      [innerX0, innerY1, z1],
+      [innerX0, innerY0, z1]
     )
   }
 }
@@ -600,41 +530,6 @@ const addPosYFaces = (
       [innerX0, innerY1, innerZ0]
     )
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY1, innerZ1],
-        [innerX0, innerY1, innerZ1],
-        [innerX0, innerY1, innerZ0],
-        [x0, innerY1, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY1, innerZ1],
-        [x1, innerY1, innerZ1],
-        [x1, innerY1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX0, innerY1, z0],
-        [innerX1, innerY1, z0],
-        [innerX1, innerY1, innerZ0],
-        [innerX0, innerY1, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, innerY1, z1],
-        [innerX0, innerY1, z1]
-      )
-    }
   } else {
     //Case where hasY is false
     if (neighborOutOfBounds) {
@@ -671,42 +566,6 @@ const addPosYFaces = (
 
     //Inner faces
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY1, innerZ1],
-        [innerX0, innerY1, innerZ1],
-        [innerX0, innerY1, innerZ0],
-        [x0, innerY1, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY1, innerZ1],
-        [x1, innerY1, innerZ1],
-        [x1, innerY1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX0, innerY1, z0],
-        [innerX1, innerY1, z0],
-        [innerX1, innerY1, innerZ0],
-        [innerX0, innerY1, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, innerY1, z1],
-        [innerX0, innerY1, z1]
-      )
-    }
-
     addFace(
       tris,
       [innerX0, innerY1, innerZ0],
@@ -734,6 +593,42 @@ const addPosYFaces = (
       [innerX1, innerY1, innerZ0],
       [innerX1, y1, innerZ0],
       [innerX1, y1, innerZ1]
+    )
+  }
+
+  if (!hasX) {
+    addFace(
+      tris,
+      [x0, innerY1, innerZ1],
+      [innerX0, innerY1, innerZ1],
+      [innerX0, innerY1, innerZ0],
+      [x0, innerY1, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, innerY1, innerZ1],
+      [x1, innerY1, innerZ1],
+      [x1, innerY1, innerZ0],
+      [innerX1, innerY1, innerZ0]
+    )
+  }
+
+  if (!hasZ) {
+    addFace(
+      tris,
+      [innerX0, innerY1, z0],
+      [innerX1, innerY1, z0],
+      [innerX1, innerY1, innerZ0],
+      [innerX0, innerY1, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX0, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ1],
+      [innerX1, innerY1, z1],
+      [innerX0, innerY1, z1]
     )
   }
 }
@@ -827,41 +722,6 @@ const addNegYFaces = (
       [innerX0, innerY0, innerZ0]
     )
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ0],
-        [x0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [x1, innerY0, innerZ1],
-        [x1, innerY0, innerZ0],
-        [innerX1, innerY0, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX0, innerY0, z0],
-        [innerX1, innerY0, z0],
-        [innerX1, innerY0, innerZ0],
-        [innerX0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY0, z1],
-        [innerX0, innerY0, z1]
-      )
-    }
   } else {
     //Case where hasY is false
     if (neighborOutOfBounds) {
@@ -898,42 +758,6 @@ const addNegYFaces = (
 
     //Inner faces
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ0],
-        [x0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [x1, innerY0, innerZ1],
-        [x1, innerY0, innerZ0],
-        [innerX1, innerY0, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX0, innerY0, z0],
-        [innerX1, innerY0, z0],
-        [innerX1, innerY0, innerZ0],
-        [innerX0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY0, z1],
-        [innerX0, innerY0, z1]
-      )
-    }
-
     addFace(
       tris,
       [innerX0, y0, innerZ0],
@@ -961,6 +785,42 @@ const addNegYFaces = (
       [innerX1, y0, innerZ0],
       [innerX1, innerY0, innerZ0],
       [innerX1, innerY0, innerZ1]
+    )
+  }
+
+  if (!hasX) {
+    addFace(
+      tris,
+      [x0, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ0],
+      [x0, innerY0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ1],
+      [x1, innerY0, innerZ1],
+      [x1, innerY0, innerZ0],
+      [innerX1, innerY0, innerZ0]
+    )
+  }
+
+  if (!hasZ) {
+    addFace(
+      tris,
+      [innerX0, innerY0, z0],
+      [innerX1, innerY0, z0],
+      [innerX1, innerY0, innerZ0],
+      [innerX0, innerY0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX0, innerY0, innerZ1],
+      [innerX1, innerY0, innerZ1],
+      [innerX1, innerY0, z1],
+      [innerX0, innerY0, z1]
     )
   }
 }
@@ -1054,41 +914,6 @@ const addPosZFaces = (
       [innerX0, innerY0, innerZ1]
     )
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY1, innerZ1],
-        [x0, innerY1, innerZ1]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [x1, innerY0, innerZ1],
-        [x1, innerY1, innerZ1],
-        [innerX1, innerY1, innerZ1]
-      )
-    }
-
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX0, y0, innerZ1],
-        [innerX1, y0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ1]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, y1, innerZ1],
-        [innerX0, y1, innerZ1]
-      )
-    }
   } else {
     //Case where hasZ is false
     if (neighborOutOfBounds) {
@@ -1125,42 +950,6 @@ const addPosZFaces = (
 
     //Inner faces
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ1],
-        [innerX0, innerY1, innerZ1],
-        [x0, innerY1, innerZ1]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [x1, innerY0, innerZ1],
-        [x1, innerY1, innerZ1],
-        [innerX1, innerY1, innerZ1]
-      )
-    }
-
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX0, y0, innerZ1],
-        [innerX1, y0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX0, innerY0, innerZ1]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, y1, innerZ1],
-        [innerX0, y1, innerZ1]
-      )
-    }
-
     addFace(
       tris,
       [innerX0, innerY0, innerZ1],
@@ -1188,6 +977,42 @@ const addPosZFaces = (
       [innerX1, innerY0, innerZ1],
       [innerX1, innerY0, z1],
       [innerX1, innerY1, z1]
+    )
+  }
+
+  if (!hasX) {
+    addFace(
+      tris,
+      [x0, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ1],
+      [innerX0, innerY1, innerZ1],
+      [x0, innerY1, innerZ1]
+    )
+
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ1],
+      [x1, innerY0, innerZ1],
+      [x1, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ1]
+    )
+  }
+
+  if (!hasY) {
+    addFace(
+      tris,
+      [innerX0, y0, innerZ1],
+      [innerX1, y0, innerZ1],
+      [innerX1, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ1]
+    )
+
+    addFace(
+      tris,
+      [innerX0, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ1],
+      [innerX1, y1, innerZ1],
+      [innerX0, y1, innerZ1]
     )
   }
 }
@@ -1281,41 +1106,6 @@ const addNegZFaces = (
       [innerX0, innerY0, innerZ0]
     )
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY0, innerZ0],
-        [innerX0, innerY0, innerZ0],
-        [innerX0, innerY1, innerZ0],
-        [x0, innerY1, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ0],
-        [x1, innerY0, innerZ0],
-        [x1, innerY1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX0, y0, innerZ0],
-        [innerX1, y0, innerZ0],
-        [innerX1, innerY0, innerZ0],
-        [innerX0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ0],
-        [innerX1, innerY1, innerZ0],
-        [innerX1, y1, innerZ0],
-        [innerX0, y1, innerZ0]
-      )
-    }
   } else {
     //Case where hasZ is false
     if (neighborOutOfBounds) {
@@ -1352,42 +1142,6 @@ const addNegZFaces = (
 
     //Inner faces
 
-    if (!hasX) {
-      addFace(
-        tris,
-        [x0, innerY0, innerZ0],
-        [innerX0, innerY0, innerZ0],
-        [innerX0, innerY1, innerZ0],
-        [x0, innerY1, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ0],
-        [x1, innerY0, innerZ0],
-        [x1, innerY1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX0, y0, innerZ0],
-        [innerX1, y0, innerZ0],
-        [innerX1, innerY0, innerZ0],
-        [innerX0, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX0, innerY1, innerZ0],
-        [innerX1, innerY1, innerZ0],
-        [innerX1, y1, innerZ0],
-        [innerX0, y1, innerZ0]
-      )
-    }
-
     addFace(
       tris,
       [innerX0, innerY0, innerZ0],
@@ -1415,6 +1169,42 @@ const addNegZFaces = (
       [innerX1, innerY0, innerZ0],
       [innerX1, innerY0, z0],
       [innerX1, innerY1, z0]
+    )
+  }
+
+  if (!hasX) {
+    addFace(
+      tris,
+      [x0, innerY0, innerZ0],
+      [innerX0, innerY0, innerZ0],
+      [innerX0, innerY1, innerZ0],
+      [x0, innerY1, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ0],
+      [x1, innerY0, innerZ0],
+      [x1, innerY1, innerZ0],
+      [innerX1, innerY1, innerZ0]
+    )
+  }
+
+  if (!hasY) {
+    addFace(
+      tris,
+      [innerX0, y0, innerZ0],
+      [innerX1, y0, innerZ0],
+      [innerX1, innerY0, innerZ0],
+      [innerX0, innerY0, innerZ0]
+    )
+
+    addFace(
+      tris,
+      [innerX0, innerY1, innerZ0],
+      [innerX1, innerY1, innerZ0],
+      [innerX1, y1, innerZ0],
+      [innerX0, y1, innerZ0]
     )
   }
 }
