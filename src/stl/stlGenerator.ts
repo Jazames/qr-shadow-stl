@@ -55,6 +55,235 @@ const addFace = (
 }
 
 
+const addPosXFaces = (  
+  tris: Triangle[],
+  grid: VoxelGrid3d,
+  x: number,
+  y: number,
+  z: number,
+  resolution: number,
+  wallThicknessVoxels: number
+): void => {
+  const hasX = hasXSurface(grid, x, y, z)
+  const hasY = hasYSurface(grid, x, y, z)
+  const hasZ = hasZSurface(grid, x, y, z)
+  const neighborHasXSurface = hasXSurface(grid, x + 1, y, z)
+  const neighborOutOfBounds = isOutOfBounds(grid, x + 1, y, z)
+
+
+  //const x0 = x * resolution
+  const x1 = (x * resolution) + resolution
+  const y0 = y * resolution
+  const y1 = (y * resolution) + resolution
+  const z0 = z * resolution
+  const z1 = (z * resolution) + resolution
+  //const innerX0 = x0 + wallThicknessVoxels
+  const innerX1 = x1 - wallThicknessVoxels
+  const innerY0 = y0 + wallThicknessVoxels
+  const innerY1 = y1 - wallThicknessVoxels
+  const innerZ0 = z0 + wallThicknessVoxels
+  const innerZ1 = z1 - wallThicknessVoxels
+
+
+  //Solid cube
+  if (hasX && hasY && hasZ) {
+    if (neighborOutOfBounds) {
+      //Full Outer face
+      addFace(
+        tris,
+        [x1, y0, z0],
+        [x1, y1, z0],
+        [x1, y1, z1],
+        [x1, y0, z1]
+      )
+      return;
+    }
+    if (!neighborHasXSurface)
+    {
+      // Small outer face
+      addFace(
+        tris,
+        [x1, innerY0, innerZ0],
+        [x1, innerY1, innerZ0],
+        [x1, innerY1, innerZ1],
+        [x1, innerY0, innerZ1]
+      )
+    }
+    return;
+  }
+
+
+  if (hasX) {
+    if (neighborOutOfBounds) {
+      //Full Outer face
+      addFace(
+        tris,
+        [x1, y0, z0],
+        [x1, y1, z0],
+        [x1, y1, z1],
+        [x1, y0, z1]
+      )
+    }
+    if (!neighborHasXSurface)
+    {
+      //Small outer face
+      addFace(
+        tris,
+        [x1, innerY0, innerZ0],
+        [x1, innerY1, innerZ0],
+        [x1, innerY1, innerZ1],
+        [x1, innerY0, innerZ1]
+      )
+    }
+
+    //Inner faces
+
+    //Small inner face
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ1],
+      [innerX1, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ0],
+      [innerX1, innerY0, innerZ0]
+    )
+
+    if (!hasY) {
+      addFace(
+        tris,
+        [innerX1, y0, innerZ1],
+        [innerX1, innerY0, innerZ1],
+        [innerX1, innerY0, innerZ0],
+        [innerX1, y0, innerZ0]
+      )
+
+      addFace(
+        tris,
+        [innerX1, innerY1, innerZ1],
+        [innerX1, y1, innerZ1],
+        [innerX1, y1, innerZ0],
+        [innerX1, innerY1, innerZ0]
+      )
+    }
+
+    if (!hasZ) {
+      addFace(
+        tris,
+        [innerX1, innerY0, z0],
+        [innerX1, innerY1, z0],
+        [innerX1, innerY1, innerZ0],
+        [innerX1, innerY0, innerZ0]
+      )
+
+      addFace(
+        tris,
+        [innerX1, innerY0, innerZ1],
+        [innerX1, innerY1, innerZ1],
+        [innerX1, innerY1, z1],
+        [innerX1, innerY0, z1]
+      )
+    }
+  } else {
+    //Case where hasX is false
+    if (neighborOutOfBounds) {
+      //Outer wireframe faces
+      addFace(
+        tris,
+        [x1, y1, z1],
+        [x1, y0, z1],
+        [x1, innerY0, innerZ1],
+        [x1, innerY1, innerZ1]
+      )
+      addFace(
+        tris,
+        [x1, y1, z1],
+        [x1, innerY1, innerZ1],
+        [x1, innerY1, innerZ0],
+        [x1, y1, z0]
+      )
+      addFace(
+        tris,
+        [x1, y0, z0],
+        [x1, y1, z0],
+        [x1, innerY1, innerZ0],
+        [x1, innerY0, innerZ0]
+      )
+      addFace(
+        tris,
+        [x1, y0, z0],
+        [x1, innerY0, innerZ0],
+        [x1, innerY0, innerZ1],
+        [x1, y0, z1]
+      )
+    }
+
+    //Inner faces
+
+    if (!hasY) {
+      addFace(
+        tris,
+        [innerX1, y0, innerZ1],
+        [innerX1, innerY0, innerZ1],
+        [innerX1, innerY0, innerZ0],
+        [innerX1, y0, innerZ0]
+      )
+
+      addFace(
+        tris,
+        [innerX1, innerY1, innerZ1],
+        [innerX1, y1, innerZ1],
+        [innerX1, y1, innerZ0],
+        [innerX1, innerY1, innerZ0]
+      )
+    }
+
+    if (!hasZ) {
+      addFace(
+        tris,
+        [innerX1, innerY0, z0],
+        [innerX1, innerY1, z0],
+        [innerX1, innerY1, innerZ0],
+        [innerX1, innerY0, innerZ0]
+      )
+
+      addFace(
+        tris,
+        [innerX1, innerY0, innerZ1],
+        [innerX1, innerY1, innerZ1],
+        [innerX1, innerY1, z1],
+        [innerX1, innerY0, z1]
+      )
+    }
+
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ0],
+      [x1, innerY0, innerZ0],
+      [x1, innerY1, innerZ0],
+      [innerX1, innerY1, innerZ0]
+    )
+    addFace(
+      tris,
+      [innerX1, innerY0, innerZ0],
+      [innerX1, innerY0, innerZ1],
+      [x1, innerY0, innerZ1],
+      [x1, innerY0, innerZ0]
+    )
+    addFace(
+      tris,
+      [innerX1, innerY1, innerZ1],
+      [x1, innerY1, innerZ1],
+      [x1, innerY0, innerZ1],
+      [innerX1, innerY0, innerZ1]
+    )
+    addFace(
+      tris,
+      [innerX1, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ0],
+      [x1, innerY1, innerZ0],
+      [x1, innerY1, innerZ1]
+    )
+  }
+}
 
 const addNegXFaces = (  
   tris: Triangle[],
@@ -138,10 +367,10 @@ const addNegXFaces = (
     //Small inner face
     addFace(
       tris,
-      [innerX0, innerY0, innerZ0],
-      [innerX0, innerY0, innerZ1],
+      [innerX0, innerY1, innerZ0],
       [innerX0, innerY1, innerZ1],
-      [innerX0, innerY1, innerZ0]
+      [innerX0, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ0]
     )
 
     if (!hasY) {
@@ -365,10 +594,10 @@ const addPosYFaces = (
     //Small inner face
     addFace(
       tris,
-      [innerX0, innerY1, innerZ0],
-      [innerX0, innerY1, innerZ1],
+      [innerX1, innerY1, innerZ0],
       [innerX1, innerY1, innerZ1],
-      [innerX1, innerY1, innerZ0]
+      [innerX0, innerY1, innerZ1],
+      [innerX0, innerY1, innerZ0]
     )
 
     if (!hasX) {
@@ -592,10 +821,10 @@ const addNegYFaces = (
     //Small inner face
     addFace(
       tris,
-      [innerX0, innerY0, innerZ0],
-      [innerX1, innerY0, innerZ0],
+      [innerX0, innerY0, innerZ1],
       [innerX1, innerY0, innerZ1],
-      [innerX0, innerY0, innerZ1]
+      [innerX1, innerY0, innerZ0],
+      [innerX0, innerY0, innerZ0]
     )
 
     if (!hasX) {
@@ -819,10 +1048,10 @@ const addPosZFaces = (
     //Small inner face
     addFace(
       tris,
-      [innerX0, innerY0, innerZ1],
-      [innerX1, innerY0, innerZ1],
+      [innerX0, innerY1, innerZ1],
       [innerX1, innerY1, innerZ1],
-      [innerX0, innerY1, innerZ1]
+      [innerX1, innerY0, innerZ1],
+      [innerX0, innerY0, innerZ1]
     )
 
     if (!hasX) {
@@ -1046,10 +1275,10 @@ const addNegZFaces = (
     //Small inner face
     addFace(
       tris,
-      [innerX0, innerY0, innerZ0],
-      [innerX0, innerY1, innerZ0],
+      [innerX1, innerY0, innerZ0],
       [innerX1, innerY1, innerZ0],
-      [innerX1, innerY0, innerZ0]
+      [innerX0, innerY1, innerZ0],
+      [innerX0, innerY0, innerZ0]
     )
 
     if (!hasX) {
@@ -1190,235 +1419,6 @@ const addNegZFaces = (
   }
 }
 
-const addPosXFaces = (  
-  tris: Triangle[],
-  grid: VoxelGrid3d,
-  x: number,
-  y: number,
-  z: number,
-  resolution: number,
-  wallThicknessVoxels: number
-): void => {
-  const hasX = hasXSurface(grid, x, y, z)
-  const hasY = hasYSurface(grid, x, y, z)
-  const hasZ = hasZSurface(grid, x, y, z)
-  const neighborHasXSurface = hasXSurface(grid, x + 1, y, z)
-  const neighborOutOfBounds = isOutOfBounds(grid, x + 1, y, z)
-
-
-  //const x0 = x * resolution
-  const x1 = (x * resolution) + resolution
-  const y0 = y * resolution
-  const y1 = (y * resolution) + resolution
-  const z0 = z * resolution
-  const z1 = (z * resolution) + resolution
-  //const innerX0 = x0 + wallThicknessVoxels
-  const innerX1 = x1 - wallThicknessVoxels
-  const innerY0 = y0 + wallThicknessVoxels
-  const innerY1 = y1 - wallThicknessVoxels
-  const innerZ0 = z0 + wallThicknessVoxels
-  const innerZ1 = z1 - wallThicknessVoxels
-
-
-  //Solid cube
-  if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
-      //Full Outer face
-      addFace(
-        tris,
-        [x1, y0, z0],
-        [x1, y1, z0],
-        [x1, y1, z1],
-        [x1, y0, z1]
-      )
-      return;
-    }
-    if (!neighborHasXSurface)
-    {
-      // Small outer face
-      addFace(
-        tris,
-        [x1, innerY0, innerZ0],
-        [x1, innerY1, innerZ0],
-        [x1, innerY1, innerZ1],
-        [x1, innerY0, innerZ1]
-      )
-    }
-    return;
-  }
-
-
-  if (hasX) {
-    if (neighborOutOfBounds) {
-      //Full Outer face
-      addFace(
-        tris,
-        [x1, y0, z0],
-        [x1, y1, z0],
-        [x1, y1, z1],
-        [x1, y0, z1]
-      )
-    }
-    if (!neighborHasXSurface)
-    {
-      //Small outer face
-      addFace(
-        tris,
-        [x1, innerY0, innerZ0],
-        [x1, innerY1, innerZ0],
-        [x1, innerY1, innerZ1],
-        [x1, innerY0, innerZ1]
-      )
-    }
-
-    //Inner faces
-
-    //Small inner face
-    addFace(
-      tris,
-      [innerX1, innerY0, innerZ0],
-      [innerX1, innerY1, innerZ0],
-      [innerX1, innerY1, innerZ1],
-      [innerX1, innerY0, innerZ1]
-    )
-
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX1, y0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY0, innerZ0],
-        [innerX1, y0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY1, innerZ1],
-        [innerX1, y1, innerZ1],
-        [innerX1, y1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX1, innerY0, y0],
-        [innerX1, innerY1, y0],
-        [innerX1, innerY1, innerZ0],
-        [innerX1, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, innerY1, y1],
-        [innerX1, innerY0, y1]
-      )
-    }
-  } else {
-    //Case where hasX is false
-    if (neighborOutOfBounds) {
-      //Outer wireframe faces
-      addFace(
-        tris,
-        [x1, y1, z1],
-        [x1, y0, z1],
-        [x1, innerY0, innerZ1],
-        [x1, innerY1, innerZ1]
-      )
-      addFace(
-        tris,
-        [x1, y1, z1],
-        [x1, innerY1, innerZ1],
-        [x1, innerY1, innerZ0],
-        [x1, y1, z0]
-      )
-      addFace(
-        tris,
-        [x1, y0, z0],
-        [x1, y1, z0],
-        [x1, innerY1, innerZ0],
-        [x1, innerY0, innerZ0]
-      )
-      addFace(
-        tris,
-        [x1, y0, z0],
-        [x1, innerY0, innerZ0],
-        [x1, innerY0, innerZ1],
-        [x1, y0, z1]
-      )
-    }
-
-    //Inner faces
-
-    if (!hasY) {
-      addFace(
-        tris,
-        [innerX1, y0, innerZ1],
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY0, innerZ0],
-        [innerX1, y0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY1, innerZ1],
-        [innerX1, y1, innerZ1],
-        [innerX1, y1, innerZ0],
-        [innerX1, innerY1, innerZ0]
-      )
-    }
-
-    if (!hasZ) {
-      addFace(
-        tris,
-        [innerX1, innerY0, y0],
-        [innerX1, innerY1, y0],
-        [innerX1, innerY1, innerZ0],
-        [innerX1, innerY0, innerZ0]
-      )
-
-      addFace(
-        tris,
-        [innerX1, innerY0, innerZ1],
-        [innerX1, innerY1, innerZ1],
-        [innerX1, innerY1, y1],
-        [innerX1, innerY0, y1]
-      )
-    }
-
-    addFace(
-      tris,
-      [innerX1, innerY0, innerZ0],
-      [x1, innerY0, innerZ0],
-      [x1, innerY1, innerZ0],
-      [innerX1, innerY1, innerZ0]
-    )
-    addFace(
-      tris,
-      [innerX1, innerY0, innerZ0],
-      [innerX1, innerY0, innerZ1],
-      [x1, innerY0, innerZ1],
-      [x1, innerY0, innerZ0]
-    )
-    addFace(
-      tris,
-      [innerX1, innerY1, innerZ1],
-      [x1, innerY1, innerZ1],
-      [x1, innerY0, innerZ1],
-      [innerX1, innerY0, innerZ1]
-    )
-    addFace(
-      tris,
-      [innerX1, innerY1, innerZ1],
-      [innerX1, innerY1, innerZ0],
-      [x1, innerY1, innerZ0],
-      [x1, innerY1, innerZ1]
-    )
-  }
-}
 
 const addFaces = (  
   tris: Triangle[],

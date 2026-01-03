@@ -89,7 +89,7 @@ const cubeGridToVoxelGrid = (cubeGrid: CubeGrid3d): VoxelGrid3d => {
 }
 
 const writeStlFixture = async (name: string, stl: Uint8Array): Promise<void> => {
-  const outDir = path.resolve("tests", "out")
+  const outDir = path.resolve("tests", "out", "trim")
   await mkdir(outDir, { recursive: true })
   await writeFile(path.join(outDir, name), stl)
 }

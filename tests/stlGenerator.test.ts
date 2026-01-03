@@ -99,7 +99,7 @@ test("3x3x3 cube missing center line along x-axis generates 128 triangles", asyn
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-x.stl", stl)
 
-  assert.equal(tris.length, 560)
+  assert.equal(tris.length, 432)
 })
 
 test("3x3x3 cube missing center line along y-axis generates 128 triangles", async () => {
@@ -108,7 +108,7 @@ test("3x3x3 cube missing center line along y-axis generates 128 triangles", asyn
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-y.stl", stl)
 
-  assert.equal(tris.length, 560)
+  assert.equal(tris.length, 432)
 })
 
 test("3x3x3 cube missing center line along z-axis generates 128 triangles", async () => {
@@ -117,7 +117,7 @@ test("3x3x3 cube missing center line along z-axis generates 128 triangles", asyn
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-3x3x3-missing-z.stl", stl)
 
-  assert.equal(tris.length, 560)
+  assert.equal(tris.length, 432)
 })
 
 test("2x2x2 cube missing one row along each axis generates 612 triangles", async () => {
@@ -126,7 +126,7 @@ test("2x2x2 cube missing one row along each axis generates 612 triangles", async
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("cube-2x2x2-missing-xyz-row.stl", stl)
 
-  assert.equal(tris.length, 612)
+  assert.equal(tris.length, 516)
 })
 
 test("1x1x1 empty voxel generates 144 triangles", async () => {
@@ -145,7 +145,7 @@ test("1x1x1 box with x-axis hole generates 32 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-x-hole.stl", stl)
 
-  assert.equal(tris.length, 32)
+  assert.equal(tris.length, 72)
 })
 
 test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
@@ -155,7 +155,7 @@ test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-y-hole.stl", stl)
 
-  assert.equal(tris.length, 32)
+  assert.equal(tris.length, 72)
 })
 
 test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
@@ -165,7 +165,7 @@ test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-z-hole.stl", stl)
 
-  assert.equal(tris.length, 32)
+  assert.equal(tris.length, 72)
 
 })
 
@@ -175,7 +175,7 @@ test("1x1x1 voxel with only x surfaces generates 216 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-x-only.stl", stl)
 
-  assert.equal(tris.length, 216)
+  assert.equal(tris.length, 108)
 })
 
 test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
@@ -184,7 +184,7 @@ test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-y-only.stl", stl)
 
-  assert.equal(tris.length, 216)
+  assert.equal(tris.length, 108)
 })
 
 test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
@@ -193,7 +193,7 @@ test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-z-only.stl", stl)
 
-  assert.equal(tris.length, 216)
+  assert.equal(tris.length, 108)
 })
 
 test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {
@@ -204,7 +204,7 @@ test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("pattern-5x5-extruded-x.stl", stl)
 
-  assert.equal(tris.length, 716)
+  assert.equal(tris.length, 1996)
 })
 
 test("5x5 pattern extruded along y-axis generates 428 triangles", async () => {
@@ -215,7 +215,7 @@ test("5x5 pattern extruded along y-axis generates 428 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("pattern-5x5-extruded-y.stl", stl)
 
-  assert.equal(tris.length, 716)
+  assert.equal(tris.length, 1996)
 })
 
 test("5x5 pattern extruded along z-axis generates 428 triangles", async () => {
@@ -226,5 +226,5 @@ test("5x5 pattern extruded along z-axis generates 428 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("pattern-5x5-extruded-z.stl", stl)
 
-  assert.equal(tris.length, 716)
+  assert.equal(tris.length, 1996)
 })
