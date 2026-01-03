@@ -24,7 +24,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: VITE_BASE=/ npm run build
+      - run: VITE_BASE=/qr-shadow-stl/ npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
