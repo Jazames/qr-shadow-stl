@@ -415,30 +415,30 @@ const addNegXFaces = (
       addFace(
         tris,
         [x0, y1, z1],
-        [x0, y0, z1],
+        [x0, innerY1, innerZ1],
         [x0, innerY0, innerZ1],
-        [x0, innerY1, innerZ1]
+        [x0, y0, z1]
       )
       addFace(
         tris,
         [x0, y1, z1],
-        [x0, innerY1, innerZ1],
+        [x0, y1, z0],
+        [x0, innerY1, innerZ0],
+        [x0, innerY1, innerZ1]
+      )
+      addFace(
+        tris,
+        [x0, y0, z0],
+        [x0, innerY0, innerZ0],
         [x0, innerY1, innerZ0],
         [x0, y1, z0]
       )
       addFace(
         tris,
         [x0, y0, z0],
-        [x0, y1, z0],
-        [x0, innerY1, innerZ0],
-        [x0, innerY0, innerZ0]
-      )
-      addFace(
-        tris,
-        [x0, y0, z0],
-        [x0, innerY0, innerZ0],
+        [x0, y0, z1],
         [x0, innerY0, innerZ1],
-        [x0, y0, z1]
+        [x0, innerY0, innerZ0]
       )
     }
 
@@ -642,30 +642,30 @@ const addPosYFaces = (
       addFace(
         tris,
         [x1, y1, z1],
-        [x0, y1, z1],
+        [innerX1, y1, innerZ1],
         [innerX0, y1, innerZ1],
-        [innerX1, y1, innerZ1]
+        [x0, y1, z1]
       )
       addFace(
         tris,
         [x1, y1, z1],
-        [innerX1, y1, innerZ1],
+        [x1, y1, z0],
+        [innerX1, y1, innerZ0],
+        [innerX1, y1, innerZ1]
+      )
+      addFace(
+        tris,
+        [x0, y1, z0],
+        [innerX0, y1, innerZ0],
         [innerX1, y1, innerZ0],
         [x1, y1, z0]
       )
       addFace(
         tris,
         [x0, y1, z0],
-        [x1, y1, z0],
-        [innerX1, y1, innerZ0],
-        [innerX0, y1, innerZ0]
-      )
-      addFace(
-        tris,
-        [x0, y1, z0],
-        [innerX0, y1, innerZ0],
+        [x0, y1, z1],
         [innerX0, y1, innerZ1],
-        [x0, y1, z1]
+        [innerX0, y1, innerZ0]
       )
     }
 
@@ -1323,30 +1323,30 @@ const addNegZFaces = (
       addFace(
         tris,
         [x1, y1, z0],
-        [x0, y1, z0],
+        [innerX1, innerY1, z0],
         [innerX0, innerY1, z0],
-        [innerX1, innerY1, z0]
+        [x0, y1, z0]
       )
       addFace(
         tris,
         [x1, y1, z0],
-        [innerX1, innerY1, z0],
+        [x1, y0, z0],
+        [innerX1, innerY0, z0],
+        [innerX1, innerY1, z0]
+      )
+      addFace(
+        tris,
+        [x0, y0, z0],
+        [innerX0, innerY0, z0],
         [innerX1, innerY0, z0],
         [x1, y0, z0]
       )
       addFace(
         tris,
         [x0, y0, z0],
-        [x1, y0, z0],
-        [innerX1, innerY0, z0],
-        [innerX0, innerY0, z0]
-      )
-      addFace(
-        tris,
-        [x0, y0, z0],
-        [innerX0, innerY0, z0],
+        [x0, y1, z0],
         [innerX0, innerY1, z0],
-        [x0, y1, z0]
+        [innerX0, innerY0, z0]
       )
     }
 
