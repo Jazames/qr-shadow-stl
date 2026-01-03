@@ -145,7 +145,7 @@ test("1x1x1 box with x-axis hole generates 32 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-x-hole.stl", stl)
 
-  assert.equal(tris.length, 56)
+  assert.equal(tris.length, 48)
 })
 
 test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
@@ -155,7 +155,7 @@ test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-y-hole.stl", stl)
 
-  assert.equal(tris.length, 56)
+  assert.equal(tris.length, 48)
 })
 
 test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
@@ -165,7 +165,7 @@ test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("box-1x1x1-z-hole.stl", stl)
 
-  assert.equal(tris.length, 56)
+  assert.equal(tris.length, 48)
 
 })
 
@@ -175,7 +175,7 @@ test("1x1x1 voxel with only x surfaces generates 216 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-x-only.stl", stl)
 
-  assert.equal(tris.length, 76)
+  assert.equal(tris.length, 72)
 })
 
 test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
@@ -184,7 +184,7 @@ test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-y-only.stl", stl)
 
-  assert.equal(tris.length, 76)
+  assert.equal(tris.length, 72)
 })
 
 test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
@@ -193,7 +193,7 @@ test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-z-only.stl", stl)
 
-  assert.equal(tris.length, 76)
+  assert.equal(tris.length, 72)
 })
 
 test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {

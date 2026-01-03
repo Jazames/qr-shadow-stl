@@ -94,9 +94,8 @@ const addPosXFaces = (
         [x1, y1, z1],
         [x1, y0, z1]
       )
-      return;
     }
-    if (!neighborHasXSurface)
+    else if (!neighborHasXSurface)
     {
       // Small outer face
       addFace(
@@ -121,7 +120,7 @@ const addPosXFaces = (
         [x1, y0, z1]
       )
     }
-    if (!neighborHasXSurface)
+    else if (!neighborHasXSurface)
     {
       //Small outer face
       addFace(
@@ -254,9 +253,8 @@ const addNegXFaces = (
         [x0, y1, z1],
         [x0, y1, z0]
       )
-      return
     }
-    if (!neighborHasXSurface)
+    else if (!neighborHasXSurface)
     {
       // Small outer face
       addFace(
@@ -281,7 +279,7 @@ const addNegXFaces = (
         [x0, y1, z0]
       )
     }
-    if (!neighborHasXSurface)
+    else if (!neighborHasXSurface)
     {
       //Small outer face
       addFace(
@@ -414,9 +412,8 @@ const addPosYFaces = (
         [x1, y1, z1],
         [x1, y1, z0]
       )
-      return
     }
-    if (!neighborHasYSurface)
+    else if (!neighborHasYSurface)
     {
       // Small outer face
       addFace(
@@ -441,7 +438,7 @@ const addPosYFaces = (
         [x1, y1, z0]
       )
     }
-    if (!neighborHasYSurface)
+    else if (!neighborHasYSurface)
     {
       //Small outer face
       addFace(
@@ -574,9 +571,8 @@ const addNegYFaces = (
         [x1, y0, z1],
         [x0, y0, z1]
       )
-      return
     }
-    if (!neighborHasYSurface)
+    else if (!neighborHasYSurface)
     {
       // Small outer face
       addFace(
@@ -601,7 +597,7 @@ const addNegYFaces = (
         [x0, y0, z1]
       )
     }
-    if (!neighborHasYSurface)
+    else if (!neighborHasYSurface)
     {
       //Small outer face
       addFace(
@@ -734,9 +730,8 @@ const addPosZFaces = (
         [x1, y1, z1],
         [x0, y1, z1]
       )
-      return
     }
-    if (!neighborHasZSurface)
+    else if (!neighborHasZSurface)
     {
       // Small outer face
       addFace(
@@ -761,7 +756,7 @@ const addPosZFaces = (
         [x0, y1, z1]
       )
     }
-    if (!neighborHasZSurface)
+    else if (!neighborHasZSurface)
     {
       //Small outer face
       addFace(
@@ -894,9 +889,8 @@ const addNegZFaces = (
         [x1, y1, z0],
         [x1, y0, z0]
       )
-      return
     }
-    if (!neighborHasZSurface)
+    else if (!neighborHasZSurface)
     {
       // Small outer face
       addFace(
@@ -921,7 +915,7 @@ const addNegZFaces = (
         [x1, y0, z0]
       )
     }
-    if (!neighborHasZSurface)
+    else if (!neighborHasZSurface)
     {
       //Small outer face
       addFace(
