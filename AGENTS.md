@@ -12,6 +12,7 @@ Generate an STL of voxel-based geometry derived from QR codes. All geometry is i
 - Vite + TypeScript (browser-only)
 - Vendored Nayuki QR generator (`src/vendor/nayuki/qrcodegen.ts`)
 - Output STL: binary by default
+- Live demo: https://jazames.github.io/qr-shadow-stl/
 
 ## Core pipeline
 1. `encodeQrToBoolGrid(text, ecc, quietZone) -> BoolGrid2d`
@@ -33,7 +34,10 @@ Generate an STL of voxel-based geometry derived from QR codes. All geometry is i
 ## Implementation notes
 - Start with exposed-face emission (correctness first).
 - Add greedy meshing later (performance).
-- Quiet zone default: 4 modules (allow 6–8).
+- Quiet zone default: 4 modules (allow 6-8).
+
+## Attribution
+- QR generator library by Project Nayuki (MIT License): https://www.nayuki.io/page/qr-code-generator-library
 
 ## What to implement first
 - `src/qr/qrTypes.ts`, `src/qr/qrEncode.ts`
@@ -41,4 +45,3 @@ Generate an STL of voxel-based geometry derived from QR codes. All geometry is i
 - `src/mesh/surfaceExtractor.ts`
 - `src/stl/stlBinaryWriter.ts`
 - Wire `src/main.ts` to a minimal UI + download.
-

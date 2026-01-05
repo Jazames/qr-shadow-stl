@@ -82,9 +82,7 @@ if (app) {
     'bricked',
     'low-key',
     'high-key',
-    'aesthetic',
     'zesty',
-    'terminally-online',
     'sketch',
     'hard',
     'capped',
@@ -98,7 +96,8 @@ if (app) {
     'skibidi',
     'mad-lit',
     'drip',
-    'yeet'
+    'yeet',
+    'six-seven'
   ]
   const nouns = [
     'unc',
