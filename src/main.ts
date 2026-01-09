@@ -38,6 +38,14 @@ if (app) {
               <span class="field-label">Wall thickness (voxels)</span>
               <input id="wall-thickness-input" type="number" min="1" step="1" value="5" />
             </label>
+            <label class="field field-toggle">
+              <input id="hollow-center-input" type="checkbox" />
+              <span class="field-label">Hollow center</span>
+            </label>
+            <label class="field">
+              <span class="field-label">Outer wall layers</span>
+              <input id="outer-wall-input" type="number" min="1" step="1" value="2" disabled />
+            </label>
             <label class="field">
               <span class="field-label">Overall size (mm)</span>
               <input id="size-input" type="number" min="0" step="0.1" value="150" />
@@ -60,6 +68,8 @@ if (app) {
   const topInput = app.querySelector<HTMLInputElement>('#qr-input-top')
   const resolutionInput = app.querySelector<HTMLInputElement>('#resolution-input')
   const wallThicknessInput = app.querySelector<HTMLInputElement>('#wall-thickness-input')
+  const hollowCenterInput = app.querySelector<HTMLInputElement>('#hollow-center-input')
+  const outerWallInput = app.querySelector<HTMLInputElement>('#outer-wall-input')
   const sizeInput = app.querySelector<HTMLInputElement>('#size-input')
   const downloadBtn = app.querySelector<HTMLButtonElement>('#download-btn')
   const statusArea = app.querySelector<HTMLDivElement>('.status-area')
@@ -168,6 +178,16 @@ if (app) {
     return value
   }
 
+  const syncHollowState = () => {
+    const enabled = hollowCenterInput?.checked ?? false
+    if (outerWallInput) {
+      outerWallInput.disabled = !enabled
+    }
+  }
+
+  hollowCenterInput?.addEventListener('change', syncHollowState)
+  syncHollowState()
+
   downloadBtn?.addEventListener('click', () => {
     const frontText = (frontInput?.value ?? '').trim()
     if (!frontText) {
@@ -176,12 +196,15 @@ if (app) {
     }
 
     try {
+      const hollowCenter = hollowCenterInput?.checked ?? false
       const grid = generateQrGrid({
         frontText,
         rightText: (rightInput?.value ?? '').trim() || undefined,
         topText: (topInput?.value ?? '').trim() || undefined,
         resolution: readNumber(resolutionInput, 1000),
         wallThicknessVoxels: readNumber(wallThicknessInput, 30),
+        hollowCenter,
+        outerWallCount: hollowCenter ? readNumber(outerWallInput, 2) : undefined,
         expectedSizeMm: readNumber(sizeInput)
       })
       const bytes = grid.stlBytes.slice().buffer;

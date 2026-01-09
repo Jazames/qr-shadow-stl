@@ -8,39 +8,60 @@ export type VoxelGrid3d = {
   sizeX: number
   sizeY: number
   sizeZ: number
-  // The 0 bit indicates the center voxel is solid; 1 means filled, 0 means empty.
-  // The 1 bit is whether the voxel has faces normal to the x-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to x-axis.
-  // The 2 bit is whether the voxel has faces normal to the y-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to y-axis.
-  // The 3 bit is whether the voxel has faces normal to the z-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to z-axis.
+  // The 0 place bit indicates the center voxel is solid; 1 means filled, 0 means empty.
+  // The 1 place bit is whether the voxel has faces normal to the x-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to x-axis.
+  // The 2 place bit is whether the voxel has faces normal to the y-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to y-axis.
+  // The 3 place bit is whether the voxel has faces normal to the z-axis that allow passthrough. 1 means there are faces, 0 means no faces normal to z-axis.
+  // The 4 place bit is whether the voxel has lattices. 1 means lattices are present, 0 means no lattices.
   data: Uint8Array
 }
 
 export const DEFAULT_RESOLUTION = 1000
 export const DEFAULT_WALL_THICKNESS_VOXELS = 10
+export const IsSolidMask = 0x01
+export const HasSurfacesNormalToXMask = 0x02
+export const HasSurfacesNormalToYMask = 0x04
+export const HasSurfacesNormalToZMask = 0x08
+export const HasLatticesMask = 0x10
+export const EmptyVoxelValue = 0
 
 const isOutOfBounds = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
   return x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ
 }
 
-const hasXSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
-  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+const isEmpty = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (isOutOfBounds(grid, x, y, z)) {
+    return true
+  }
+  return grid.data[x + grid.sizeX * (y + grid.sizeY * z)] === EmptyVoxelValue
+}
+
+const voxelContainsLattices = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (isOutOfBounds(grid, x, y, z)) {
     return false
   }
-  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & 0x02) === 0x02
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & HasLatticesMask) === HasLatticesMask
+}
+
+const hasXSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
+  if (isEmpty(grid, x, y, z)) {
+    return false
+  }
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & HasSurfacesNormalToXMask) === HasSurfacesNormalToXMask
 }
 
 const hasYSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
-  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+  if (isEmpty(grid, x, y, z)) {
     return false
   }
-  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & 0x04) === 0x04
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & HasSurfacesNormalToYMask) === HasSurfacesNormalToYMask
 }
 
 const hasZSurface = (grid: VoxelGrid3d, x: number, y: number, z: number): boolean => {
-  if (x < 0 || y < 0 || z < 0 || x >= grid.sizeX || y >= grid.sizeY || z >= grid.sizeZ) {
+  if (isEmpty(grid, x, y, z)) {
     return false
   }
-  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & 0x08) === 0x08
+  return (grid.data[x + grid.sizeX * (y + grid.sizeY * z)] & HasSurfacesNormalToZMask) === HasSurfacesNormalToZMask
 }
 
 const addFace = (
@@ -67,8 +88,9 @@ const addPosXFaces = (
   const hasX = hasXSurface(grid, x, y, z)
   const hasY = hasYSurface(grid, x, y, z)
   const hasZ = hasZSurface(grid, x, y, z)
+  const hasLattices = voxelContainsLattices(grid, x, y, z)
   const neighborHasXSurface = hasXSurface(grid, x + 1, y, z)
-  const neighborOutOfBounds = isOutOfBounds(grid, x + 1, y, z)
+  const neighborEmpty = isEmpty(grid, x + 1, y, z)
 
   //const x0 = x * resolution
   const x1 = (x * resolution) + resolution
@@ -85,7 +107,7 @@ const addPosXFaces = (
 
   //Solid cube
   if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -110,7 +132,7 @@ const addPosXFaces = (
   }
 
   if (hasX) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -143,7 +165,14 @@ const addPosXFaces = (
 
   } else {
     //Case where hasX is false
-    if (neighborOutOfBounds) {
+
+    //If there are no lattices, skip adding faces
+    if (!hasLattices) {
+      return
+    }
+
+    //Otherwise, add in wireframe faces
+    if (neighborEmpty) {
       //Outer wireframe faces
       addFace(
         tris,
@@ -226,8 +255,9 @@ const addNegXFaces = (
   const hasX = hasXSurface(grid, x, y, z)
   const hasY = hasYSurface(grid, x, y, z)
   const hasZ = hasZSurface(grid, x, y, z)
+  const hasLattices = voxelContainsLattices(grid, x, y, z)
   const neighborHasXSurface = hasXSurface(grid, x - 1, y, z)
-  const neighborOutOfBounds = isOutOfBounds(grid, x - 1, y, z)
+  const neighborEmpty = isEmpty(grid, x - 1, y, z)
 
   const x0 = x * resolution
   //const x1 = (x * resolution) + resolution
@@ -244,7 +274,7 @@ const addNegXFaces = (
 
   //Solid cube
   if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -269,7 +299,7 @@ const addNegXFaces = (
   }
 
   if (hasX) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -302,7 +332,13 @@ const addNegXFaces = (
 
   } else {
     //Case where hasX is false
-    if (neighborOutOfBounds) {
+    //If there are no lattices, skip adding faces
+    if (!hasLattices) {
+      return
+    }
+
+    //Otherwise, add in wireframe faces
+    if (neighborEmpty) {
       //Outer wireframe faces
       addFace(
         tris,
@@ -385,8 +421,9 @@ const addPosYFaces = (
   const hasX = hasXSurface(grid, x, y, z)
   const hasY = hasYSurface(grid, x, y, z)
   const hasZ = hasZSurface(grid, x, y, z)
+  const hasLattices = voxelContainsLattices(grid, x, y, z)
   const neighborHasYSurface = hasYSurface(grid, x, y + 1, z)
-  const neighborOutOfBounds = isOutOfBounds(grid, x, y + 1, z)
+  const neighborEmpty = isEmpty(grid, x, y + 1, z)
 
   const x0 = x * resolution
   const x1 = (x * resolution) + resolution
@@ -403,7 +440,7 @@ const addPosYFaces = (
 
   //Solid cube
   if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -428,7 +465,7 @@ const addPosYFaces = (
   }
 
   if (hasY) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -461,7 +498,13 @@ const addPosYFaces = (
 
   } else {
     //Case where hasY is false
-    if (neighborOutOfBounds) {
+    //If there are no lattices, skip adding faces
+    if (!hasLattices) {
+      return
+    }
+
+    //Otherwise, add in wireframe faces
+    if (neighborEmpty) {
       //Outer wireframe faces
       addFace(
         tris,
@@ -544,8 +587,9 @@ const addNegYFaces = (
   const hasX = hasXSurface(grid, x, y, z)
   const hasY = hasYSurface(grid, x, y, z)
   const hasZ = hasZSurface(grid, x, y, z)
+  const hasLattices = voxelContainsLattices(grid, x, y, z)
   const neighborHasYSurface = hasYSurface(grid, x, y - 1, z)
-  const neighborOutOfBounds = isOutOfBounds(grid, x, y - 1, z)
+  const neighborEmpty = isEmpty(grid, x, y - 1, z)
 
   const x0 = x * resolution
   const x1 = (x * resolution) + resolution
@@ -562,7 +606,7 @@ const addNegYFaces = (
 
   //Solid cube
   if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -587,7 +631,7 @@ const addNegYFaces = (
   }
 
   if (hasY) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -620,7 +664,13 @@ const addNegYFaces = (
 
   } else {
     //Case where hasY is false
-    if (neighborOutOfBounds) {
+    //If there are no lattices, skip adding faces
+    if (!hasLattices) {
+      return
+    }
+
+    //Otherwise, add in wireframe faces
+    if (neighborEmpty) {
       //Outer wireframe faces
       addFace(
         tris,
@@ -703,8 +753,9 @@ const addPosZFaces = (
   const hasX = hasXSurface(grid, x, y, z)
   const hasY = hasYSurface(grid, x, y, z)
   const hasZ = hasZSurface(grid, x, y, z)
+  const hasLattices = voxelContainsLattices(grid, x, y, z)
   const neighborHasZSurface = hasZSurface(grid, x, y, z + 1)
-  const neighborOutOfBounds = isOutOfBounds(grid, x, y, z + 1)
+  const neighborEmpty = isEmpty(grid, x, y, z + 1)
 
   const x0 = x * resolution
   const x1 = (x * resolution) + resolution
@@ -721,7 +772,7 @@ const addPosZFaces = (
 
   //Solid cube
   if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -746,7 +797,7 @@ const addPosZFaces = (
   }
 
   if (hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -779,7 +830,13 @@ const addPosZFaces = (
 
   } else {
     //Case where hasZ is false
-    if (neighborOutOfBounds) {
+    //If there are no lattices, skip adding faces
+    if (!hasLattices) {
+      return
+    }
+
+    //Otherwise, add in wireframe faces
+    if (neighborEmpty) {
       //Outer wireframe faces
       addFace(
         tris,
@@ -862,8 +919,9 @@ const addNegZFaces = (
   const hasX = hasXSurface(grid, x, y, z)
   const hasY = hasYSurface(grid, x, y, z)
   const hasZ = hasZSurface(grid, x, y, z)
+  const hasLattices = voxelContainsLattices(grid, x, y, z)
   const neighborHasZSurface = hasZSurface(grid, x, y, z - 1)
-  const neighborOutOfBounds = isOutOfBounds(grid, x, y, z - 1)
+  const neighborEmpty = isEmpty(grid, x, y, z - 1)
 
   const x0 = x * resolution
   const x1 = (x * resolution) + resolution
@@ -880,7 +938,7 @@ const addNegZFaces = (
 
   //Solid cube
   if (hasX && hasY && hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -905,7 +963,7 @@ const addNegZFaces = (
   }
 
   if (hasZ) {
-    if (neighborOutOfBounds) {
+    if (neighborEmpty) {
       //Full Outer face
       addFace(
         tris,
@@ -938,7 +996,13 @@ const addNegZFaces = (
 
   } else {
     //Case where hasZ is false
-    if (neighborOutOfBounds) {
+    //If there are no lattices, skip adding faces
+    if (!hasLattices) {
+      return
+    }
+
+    //Otherwise, add in wireframe faces
+    if (neighborEmpty) {
       //Outer wireframe faces
       addFace(
         tris,

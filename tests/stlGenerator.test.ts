@@ -2,9 +2,30 @@ import test from "node:test"
 import assert from "node:assert/strict"
 import { mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
-import { surfaceExtract, writeBinaryStl, type VoxelGrid3d } from "../src/stl/stlGenerator.js"
+import {
+  surfaceExtract,
+  writeBinaryStl,
+  EmptyVoxelValue,
+  HasLatticesMask,
+  HasSurfacesNormalToXMask,
+  HasSurfacesNormalToYMask,
+  HasSurfacesNormalToZMask,
+  IsSolidMask,
+  type VoxelGrid3d
+} from "../src/stl/stlGenerator.js"
 
-const solidVoxel = 0x0f
+const SolidVoxelValue = IsSolidMask
+  | HasSurfacesNormalToXMask
+  | HasSurfacesNormalToYMask
+  | HasSurfacesNormalToZMask
+  | HasLatticesMask
+const SurfaceYAndZ = HasSurfacesNormalToYMask | HasSurfacesNormalToZMask | HasLatticesMask
+const SurfaceXAndZ = HasSurfacesNormalToXMask | HasSurfacesNormalToZMask | HasLatticesMask
+const SurfaceXAndY = HasSurfacesNormalToXMask | HasSurfacesNormalToYMask | HasLatticesMask
+const SurfaceXOnly = HasSurfacesNormalToXMask | HasLatticesMask
+const SurfaceYOnly = HasSurfacesNormalToYMask | HasLatticesMask
+const SurfaceZOnly = HasSurfacesNormalToZMask | HasLatticesMask
+const LatticesOnly = HasLatticesMask
 const testResolution = 10
 const testWallThickness = 1
 const pattern5x5 = [
@@ -29,7 +50,7 @@ const createGrid = (
   for (let z = 0; z < sizeZ; z++) {
     for (let y = 0; y < sizeY; y++) {
       for (let x = 0; x < sizeX; x++) {
-        data[idx++] = isSolidVoxel(x, y, z) ? solidVoxel : 0x00
+        data[idx++] = isSolidVoxel(x, y, z) ? SolidVoxelValue : LatticesOnly
       }
     }
   }
@@ -129,8 +150,19 @@ test("2x2x2 cube missing one row along each axis generates 612 triangles", async
   assert.equal(tris.length, 324)
 })
 
+test("2x2x2 cube missing one row clears lattices on empty voxels", async () => {
+  const gridWithLattices = createGridWithValues(2, 2, 2, (x, y, z) =>
+    x + y + z < 2 ? SolidVoxelValue : EmptyVoxelValue
+  )
+  const tris = surfaceExtract(gridWithLattices, testResolution, testWallThickness)
+  const stl = writeBinaryStl(tris, 1)
+  await writeStlFixture("cube-2x2x2-missing-xyz-row-cleared-lattices.stl", stl)
+
+  assert.equal(tris.length, 36)
+})
+
 test("1x1x1 empty voxel generates 144 triangles", async () => {
-  const grid = singleVoxelGrid(0x00)
+  const grid = singleVoxelGrid(LatticesOnly)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-empty.stl", stl)
@@ -139,7 +171,7 @@ test("1x1x1 empty voxel generates 144 triangles", async () => {
 })
 
 test("1x1x1 box with x-axis hole generates 32 triangles", async () => {
-  const grid = singleVoxelGrid(0x08 | 0x04)
+  const grid = singleVoxelGrid(SurfaceYAndZ)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
 
   const stl = writeBinaryStl(tris, 1)
@@ -149,7 +181,7 @@ test("1x1x1 box with x-axis hole generates 32 triangles", async () => {
 })
 
 test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
-  const grid = singleVoxelGrid( 0x08 | 0x02)
+  const grid = singleVoxelGrid(SurfaceXAndZ)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
 
   const stl = writeBinaryStl(tris, 1)
@@ -159,7 +191,7 @@ test("1x1x1 box with y-axis hole generates 32 triangles", async () => {
 })
 
 test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
-  const grid = singleVoxelGrid( 0x04 | 0x02)
+  const grid = singleVoxelGrid(SurfaceXAndY)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
 
   const stl = writeBinaryStl(tris, 1)
@@ -170,7 +202,7 @@ test("1x1x1 box with z-axis hole generates 32 triangles", async () => {
 })
 
 test("1x1x1 voxel with only x surfaces generates 216 triangles", async () => {
-  const grid = singleVoxelGrid(0x02)
+  const grid = singleVoxelGrid(SurfaceXOnly)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-x-only.stl", stl)
@@ -179,7 +211,7 @@ test("1x1x1 voxel with only x surfaces generates 216 triangles", async () => {
 })
 
 test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
-  const grid = singleVoxelGrid(0x04)
+  const grid = singleVoxelGrid(SurfaceYOnly)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-y-only.stl", stl)
@@ -188,7 +220,7 @@ test("1x1x1 voxel with only y surfaces generates 216 triangles", async () => {
 })
 
 test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
-  const grid = singleVoxelGrid(0x08)
+  const grid = singleVoxelGrid(SurfaceZOnly)
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
   await writeStlFixture("voxel-1x1x1-z-only.stl", stl)
@@ -198,7 +230,7 @@ test("1x1x1 voxel with only z surfaces generates 216 triangles", async () => {
 
 test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {
   const grid = createGridWithValues(5, 5, 5, (_, y, z) =>
-    isPatternSolid(y, z) ? solidVoxel : (0x08 | 0x04)
+    isPatternSolid(y, z) ? SolidVoxelValue : SurfaceYAndZ
   )
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
@@ -209,7 +241,7 @@ test("5x5 pattern extruded along x-axis generates 428 triangles", async () => {
 
 test("5x5 pattern extruded along y-axis generates 428 triangles", async () => {
   const grid = createGridWithValues(5, 5, 5, (x, _, z) =>
-    isPatternSolid(x, z) ? solidVoxel : (0x08 | 0x02)
+    isPatternSolid(x, z) ? SolidVoxelValue : SurfaceXAndZ
   )
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)
@@ -220,7 +252,7 @@ test("5x5 pattern extruded along y-axis generates 428 triangles", async () => {
 
 test("5x5 pattern extruded along z-axis generates 428 triangles", async () => {
   const grid = createGridWithValues(5, 5, 5, (x, y, _) =>
-    isPatternSolid(x, y) ? solidVoxel : (0x04 | 0x02)
+    isPatternSolid(x, y) ? SolidVoxelValue : SurfaceXAndY
   )
   const tris = surfaceExtract(grid, testResolution, testWallThickness)
   const stl = writeBinaryStl(tris, 1)

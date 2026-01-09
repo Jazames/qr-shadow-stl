@@ -79,6 +79,12 @@ h1 {
   gap: 8px;
 }
 
+.field-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .field-label {
   font-weight: 600;
   color: #1d2140;
@@ -93,6 +99,19 @@ input[type="number"] {
   font-size: 1rem;
   background: #f8faff;
   transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #4a6bff;
+}
+
+input[disabled] {
+  background: #eef1f7;
+  color: #8b93ad;
+  border-color: #d6dbea;
+  cursor: not-allowed;
 }
 
 input[type="text"]:focus,

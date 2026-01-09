@@ -1,6 +1,13 @@
 import { qrcodegen } from './vendor/nayuki/qrcodegen.js'
 import { gridToBinaryStl } from './stl/stlGenerator.js'
-import { DEFAULT_RESOLUTION } from './stl/stlGenerator.js'
+import {
+  DEFAULT_RESOLUTION,
+  HasLatticesMask,
+  HasSurfacesNormalToXMask,
+  HasSurfacesNormalToYMask,
+  HasSurfacesNormalToZMask,
+  IsSolidMask
+} from './stl/stlGenerator.js'
 import type { VoxelGrid3d } from './stl/stlGenerator.js'
 import { CubeNode } from './voxel/cubeNode.js'
 
@@ -23,6 +30,8 @@ export type QrGenerationOptions = {
   topText?: string
   resolution?: number
   wallThicknessVoxels?: number
+  hollowCenter?: boolean
+  outerWallCount?: number
   expectedSizeMm?: number
 }
 
@@ -46,16 +55,19 @@ const encodeQr = (text?: string): QrPayload | null => {
 const getDataFromCubeNode = (node: CubeNode): number => {
   let value: number = 0
   if (node.isSolid) {
-    value |= 0x01
+    value |= IsSolidMask
   }
   if (node.hasSurfacesNormalToX) {
-    value |= 0x02
+    value |= HasSurfacesNormalToXMask
   }
   if (node.hasSurfacesNormalToY) {
-    value |= 0x04
+    value |= HasSurfacesNormalToYMask
   }
   if (node.hasSurfacesNormalToZ) {
-    value |= 0x08
+    value |= HasSurfacesNormalToZMask
+  }
+  if (node.hasLattices) {
+    value |= HasLatticesMask
   }
   return value
 }
@@ -121,6 +133,27 @@ const carveAlongZ = (cubeGrid: CubeGrid3d, qr: qrcodegen.QrCode, size: number): 
         for (let z = 0; z < size; z++) {
           cubeGrid[x][y][z].clearZ()
         }
+      }
+    }
+  }
+}
+
+const hollowCenter = (cubeGrid: CubeGrid3d, outerWallCount: number): void => {
+  const size = cubeGrid.length
+  const maxWalls = Math.floor(size / 2)
+  const wallCount = Math.min(Math.floor(outerWallCount), maxWalls)
+  if (wallCount <= 0) {
+    return
+  }
+
+  const min = wallCount
+  const max = size - wallCount
+
+  for (let x = min; x < max; x++) {
+    for (let y = min; y < max; y++) {
+      for (let z = min; z < max; z++) {
+        cubeGrid[x][y][z].clearAllSurfacesWhileLeavingLattices()
+        cubeGrid[x][y][z].clearLattices()
       }
     }
   }
@@ -290,7 +323,7 @@ export const trimFloatingVoxels = (cubeGrid: CubeGrid3d): void => {
       for (let z = 0; z < sizeZ; z++) {
         const node = cubeGrid[x][y][z]
         if (isActiveNode(node) && (!largestSet || !largestSet.has(node))) {
-          node.clearAll()
+          node.clearAllSurfacesWhileLeavingLattices()
         }
       }
     }
@@ -316,6 +349,13 @@ export const generateQrGrid = (options: QrGenerationOptions): QrGenerationResult
   }
   if (topPayload) {
     carveAlongY(cubeGrid, topPayload.qr, size)
+  }
+
+  if (options.hollowCenter) {
+    const outerWallCount = options.outerWallCount ?? 2
+    if (outerWallCount > 0) {
+      hollowCenter(cubeGrid, outerWallCount)
+    }
   }
 
   // Trim floating voxels

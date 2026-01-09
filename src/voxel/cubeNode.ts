@@ -3,6 +3,7 @@ export class CubeNode {
   hasSurfacesNormalToX: boolean = true
   hasSurfacesNormalToY: boolean = true
   hasSurfacesNormalToZ: boolean = true
+  hasLattices: boolean = true
 
   constructor(isSolid = true) {
     this.isSolid = isSolid
@@ -23,10 +24,14 @@ export class CubeNode {
     this.hasSurfacesNormalToZ = false
   }
 
-  clearAll(): void {
+  clearAllSurfacesWhileLeavingLattices(): void {
     this.isSolid = false
     this.hasSurfacesNormalToX = false
     this.hasSurfacesNormalToY = false
     this.hasSurfacesNormalToZ = false
+  }
+
+  clearLattices(): void {
+    this.hasLattices = false
   }
 }

@@ -4,7 +4,16 @@ import { mkdir, writeFile } from "node:fs/promises"
 import path from "node:path"
 import { trimFloatingVoxels, type CubeGrid3d } from "../src/generator.js"
 import { CubeNode } from "../src/voxel/cubeNode.js"
-import { surfaceExtract, writeBinaryStl, type VoxelGrid3d } from "../src/stl/stlGenerator.js"
+import {
+  surfaceExtract,
+  writeBinaryStl,
+  HasLatticesMask,
+  HasSurfacesNormalToXMask,
+  HasSurfacesNormalToYMask,
+  HasSurfacesNormalToZMask,
+  IsSolidMask,
+  type VoxelGrid3d
+} from "../src/stl/stlGenerator.js"
 
 const createCubeGrid = (
   sizeX: number,
@@ -18,7 +27,7 @@ const createCubeGrid = (
         const solid = isSolid(x, y, z)
         const node = new CubeNode(solid)
         if (!solid) {
-          node.clearAll()
+          node.clearAllSurfacesWhileLeavingLattices()
         }
         return node
       })
@@ -43,7 +52,7 @@ const makeNode = (options?: {
 }): CubeNode => {
   const node = new CubeNode(options?.solid ?? false)
   if (!options?.solid) {
-    node.clearAll()
+    node.clearAllSurfacesWhileLeavingLattices()
   }
   if (options?.surfaces) {
     node.hasSurfacesNormalToX = options.surfaces.x ?? false
@@ -56,16 +65,19 @@ const makeNode = (options?: {
 const getDataFromCubeNode = (node: CubeNode): number => {
   let value = 0
   if (node.isSolid) {
-    value |= 0x01
+    value |= IsSolidMask
   }
   if (node.hasSurfacesNormalToX) {
-    value |= 0x02
+    value |= HasSurfacesNormalToXMask
   }
   if (node.hasSurfacesNormalToY) {
-    value |= 0x04
+    value |= HasSurfacesNormalToYMask
   }
   if (node.hasSurfacesNormalToZ) {
-    value |= 0x08
+    value |= HasSurfacesNormalToZMask
+  }
+  if (node.hasLattices) {
+    value |= HasLatticesMask
   }
   return value
 }
